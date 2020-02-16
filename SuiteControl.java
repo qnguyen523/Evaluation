@@ -14,4 +14,7 @@ public class SuiteControl {
 	public JPanel getSuitePanel() {
 		return panel;
 	}
+	public JLabel getWeightingFactors() {
+		return weightingFactors;
+	}
 }
