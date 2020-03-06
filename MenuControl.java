@@ -185,11 +185,11 @@ public class MenuControl {
     	return menuBar;
     }
    
-    protected JTabbedPane tabPane;
+    protected JTabbedPane tabPane = new JTabbedPane();;
     class FunctionPointItemListener implements ActionListener {
     	public void actionPerformed(ActionEvent e) {
     		frame.setLayout(new BorderLayout());
-    		tabPane = new JTabbedPane();
+    		
     		JPanel panel = new JPanel();
     		tabPane.addTab("Function Points", panel);
     		frame.getContentPane().add(tabPane, BorderLayout.CENTER);
