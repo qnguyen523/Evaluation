@@ -79,7 +79,7 @@ public class MenuControl {
     	preferences_option1 = new JMenuItem("Language");
     	// could add languageField here to change language
     	LanguageItemListener lanItem = new LanguageItemListener();
-    	lanItem.setFields(fp, text, languageField,saveObject);
+    	lanItem.setFields(fp, text, languageField,saveObject,projectInfo);
     	preferences_option1.addActionListener(lanItem);
     	
     	// add to preferences

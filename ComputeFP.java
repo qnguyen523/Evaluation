@@ -37,7 +37,7 @@ public class ComputeFP implements ActionListener {
 			id[EO].output.setText(String.valueOf(fp.EOCount));
 			id[EInq].output.setText(String.valueOf(fp.EInqCount));
 			id[ILF].output.setText(String.valueOf(fp.ILFCount));
-			id[EIF].output.setText(String.valueOf(fp.ILFCount));
+			id[EIF].output.setText(String.valueOf(fp.EIFCount));
 			
 			// compute fp
 			DecimalFormat format = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);

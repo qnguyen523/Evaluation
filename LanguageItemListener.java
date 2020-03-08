@@ -7,16 +7,26 @@ public class LanguageItemListener implements ActionListener  {
 	String text;
 	JTextField languageField;
 	SaveModel saveObject;
-	public void setFields(FPModel fp, String text, JTextField languageField,SaveModel saveObject) {
+	ProjectInfoModel projectInfo;
+	public void setFields(FPModel fp, String text, JTextField languageField,SaveModel saveObject,ProjectInfoModel projectInfo) {
 		this.fp=fp;this.text=text;this.languageField=languageField;
 		this.saveObject=saveObject;
 		this.saveObject.languageField=this.languageField;
+		this.projectInfo=projectInfo;
 	}
 	// constructor
 	public LanguageItemListener() {
 		text="";fp=null;
 	}
     public void actionPerformed(ActionEvent e) { 
+    	String hold = projectInfo.newProjectText.getText();
+    	
+    	if(hold.equals("") || hold.equals("Project Name cannot be empty")) {
+    		System.err.println("Error");
+    		JOptionPane.showMessageDialog(null, "Please enter your project name", "Alert", JOptionPane.ERROR_MESSAGE);
+    		return;
+    	}
+    	
     	JFrame newProjectFrame=new JFrame("Choose a language");
     	newProjectFrame.setLayout(null);  
     	newProjectFrame.setSize(300,600);

@@ -33,6 +33,14 @@ import javax.swing.*;
     	public void actionPerformed(ActionEvent e) {
     		languageField = new JTextField(2);
     		String hold = lanItem.text;
+    		
+    		System.out.println("hold");
+    		if (hold.equals("")) {
+    			JOptionPane.showMessageDialog(null, "Please choose a language", "Alert", JOptionPane.ERROR_MESSAGE);
+    			System.err.println("Error");
+    			return;
+    		}
+    		
     		languageField.setText(hold); 
     		
     		// no language is selected when opening a new tab
