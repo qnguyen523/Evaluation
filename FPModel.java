@@ -9,7 +9,7 @@ public class FPModel {
 	int LOC;
 	public int EICount,EOCount,EInqCount,ILFCount,EIFCount;
 	public int totalCount;
-	public int fp=0;
+	double fp=0.0;
 	// constructor
 	public FPModel() {
 		EICount=EOCount=EInqCount=ILFCount=EIFCount=totalCount=0;
@@ -19,10 +19,11 @@ public class FPModel {
 		return EICount+EOCount+EInqCount+ILFCount+EIFCount;
 	}
 	// fp = total_count * [0.65 + 0.01 sum(f_i)]
-	public int computeFP(int vaf_total_value) {
+	public double computeFP(int vaf_total_value) {
 		totalCount = computeTotal();
-		fp=(int) Math.ceil(totalCount * (0.65 + 0.01 * vaf_total_value));
+		fp = totalCount * (0.65 + 0.01 * vaf_total_value);
 		return fp;
+		
 	}
 	public void selectLanguageSize() {
 		switch(currentLanguge) {
@@ -71,8 +72,8 @@ public class FPModel {
 			break;
 		}
 	}
-	public long computeCodeSize() {
+	public int computeCodeSize() {
 		selectLanguageSize();
-		return LOC*fp;
+		return (int) Math.round(LOC*fp);
 	}
 }

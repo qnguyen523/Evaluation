@@ -1,5 +1,7 @@
 import java.awt.event.*;
 import javax.swing.*;
+import java.text.*;
+import java.util.*;
 public class ComputeSize implements ActionListener {
 	FPModel fp;
 	JTextField CodeSizeField;
@@ -9,6 +11,7 @@ public class ComputeSize implements ActionListener {
 	}
 	public void actionPerformed(ActionEvent e) {
 		// compute code size
-		CodeSizeField.setText(fp.computeCodeSize()+"");
+		DecimalFormat format = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+		CodeSizeField.setText(format.format(fp.computeCodeSize())+"");
 	}
 }

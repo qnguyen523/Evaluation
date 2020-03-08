@@ -1,17 +1,17 @@
-import java.awt.Button;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 public class LanguageItemListener implements ActionListener  {
 	FPModel fp;
 	String text;
-	public void setField(FPModel fp, String text) {
-		this.fp=fp;this.text=text;
+	JTextField languageField;
+	public void setFields(FPModel fp, String text, JTextField languageField) {
+		this.fp=fp;this.text=text;this.languageField=languageField;
+	}
+	// constructor
+	public LanguageItemListener() {
+		text="";fp=null;
 	}
     public void actionPerformed(ActionEvent e) { 
     	JFrame newProjectFrame=new JFrame("Choose a language");
@@ -75,76 +75,91 @@ public class LanguageItemListener implements ActionListener  {
     			if (checkBoxes[0].isSelected()) {
     				fp.currentLanguge = FPModel.LANGUAGE.ASSEMBLER;
 					text = "ASSEMBLER";
+					languageField.setText("ASSEMBLER");
     	    		newProjectFrame.dispose();
     	    		return;
     			}
     			else if (checkBoxes[1].isSelected())  {
     				fp.currentLanguge = FPModel.LANGUAGE.ADA_95;
 					text = "ADA 95";
+					languageField.setText("ADA 95");
     	    		newProjectFrame.dispose();
     	    		return;
     			}
     			else if (checkBoxes[2].isSelected())  {
     				fp.currentLanguge = FPModel.LANGUAGE.CL;
 					text = "C";
+					languageField.setText("C");
     	    		newProjectFrame.dispose();
     	    		return;
     			}
     			else if (checkBoxes[3].isSelected())  {
     				fp.currentLanguge = FPModel.LANGUAGE.CLPLUS;
 					text = "C++";
+					languageField.setText("C++");
     	    		newProjectFrame.dispose();
     	    		return;
     			}
     			else if (checkBoxes[4].isSelected())  {
     				fp.currentLanguge = FPModel.LANGUAGE.CSHARP;
 					text = "C#";
+					languageField.setText("C#");
     	    		newProjectFrame.dispose();
     	    		return;
     			}
     			else if (checkBoxes[5].isSelected())  {
     				fp.currentLanguge = FPModel.LANGUAGE.COBOL;
 					text = "COBOL";
+					languageField.setText("COBOL");
     	    		newProjectFrame.dispose();
     	    		return;
     			}
     			else if (checkBoxes[6].isSelected())  {
     				fp.currentLanguge = FPModel.LANGUAGE.FORTRAN;
 					text = "FORTRAN";
+					languageField.setText("FORTRAN");
     	    		newProjectFrame.dispose();
     	    		return;
     			}
     			else if (checkBoxes[7].isSelected())  {
     				fp.currentLanguge = FPModel.LANGUAGE.HTML;
 					text = "HTML";
+					languageField.setText("HTML");
     	    		newProjectFrame.dispose();
     	    		return;
     			}
     			else if (checkBoxes[8].isSelected())  {
     				fp.currentLanguge = FPModel.LANGUAGE.JAVA;
 					text = "JAVA";
+					languageField.setText("JAVA");
     	    		newProjectFrame.dispose();
     	    		return;
     			}
     			else if (checkBoxes[9].isSelected())  {
     				fp.currentLanguge = FPModel.LANGUAGE.JAVASCRIPT;
 					text = "JAVASCRIPT";
+					languageField.setText("JAVASCRIPT");
     	    		newProjectFrame.dispose();
     	    		return;
     			}
     			else if (checkBoxes[10].isSelected())  {
     				fp.currentLanguge = FPModel.LANGUAGE.VBSCRIPT;
 					text = "VBSCRIPT";
+					languageField.setText("VBSCRIPT");
     	    		newProjectFrame.dispose();
     	    		return;
     			}
     			else if (checkBoxes[11].isSelected())  {
     				fp.currentLanguge = FPModel.LANGUAGE.VISUAL_BASIC;
 					text = "VISUAL BASIC";
+					languageField.setText("VISUAL BASIC");
     	    		newProjectFrame.dispose();
     	    		return;
     			}
     			else {
+    				JOptionPane.showMessageDialog(newProjectFrame, "Please choose a language", "Alert", JOptionPane.ERROR_MESSAGE);
+    				languageField.setText("");
+    				text="";
     				System.err.println("Error");
     			}
     			

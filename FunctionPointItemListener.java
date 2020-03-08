@@ -7,8 +7,7 @@ import javax.swing.*;
     	
     	final private int SIMPLE = 0, AVERAGE = 1, COMPLEX = 2;
     	protected JTabbedPane tabPane = new JTabbedPane();
-    	// back-end
-        protected JTextField languageField = new JTextField(2);
+    	
         
         final int EI = 0, EO = 1, EInq = 2, ILF = 3, EIF = 4;
     	public JTextField VAFField = new JTextField(2);
@@ -17,15 +16,17 @@ import javax.swing.*;
     	JFrame frame;
     	FPModel fp;
     	infomationDomain[] id;// = new infomationDomain[5];
-    	public void setFields(LanguageItemListener lanItem, JFrame frame, FPModel fp) {
+    	JTextField languageField = new JTextField(2);
+    	public void setFields(LanguageItemListener lanItem, JFrame frame, FPModel fp,JTextField languageField) {
     		this.lanItem=lanItem;
     		this.frame=frame;
     		this.fp=fp;
+//    		this.languageField=languageField;
     	}
     	public void actionPerformed(ActionEvent e) {
     		languageField = new JTextField(2);
     		String hold = lanItem.text;
-    		languageField.setText(hold);
+    		languageField.setText(hold); 
     		
     		// no language is selected when opening a new tab
     		if (hold.equals("ASSEMBLER")) {
@@ -193,22 +194,22 @@ import javax.swing.*;
     		id[EIF].radioButtons[SIMPLE].setBounds(280,130,90,20);
     		id[EIF].radioButtons[AVERAGE].setBounds(370,130,90,20);
     		id[EIF].radioButtons[COMPLEX].setBounds(460,130,90,20);
-    		id[EI].output.setBounds(550,50,50,20);
-    		id[EO].output.setBounds(550,70,50,20);
-    		id[EInq].output.setBounds(550,90,50,20);
-    		id[ILF].output.setBounds(550,110,50,20);
-    		id[EIF].output.setBounds(550,130,50,20);
+    		id[EI].output.setBounds(550,50,80,20);
+    		id[EO].output.setBounds(550,70,80,20);
+    		id[EInq].output.setBounds(550,90,80,20);
+    		id[ILF].output.setBounds(550,110,80,20);
+    		id[EIF].output.setBounds(550,130,80,20);
     		totalCount.setBounds(10,160,180,20);
-    		total.setBounds(550,160,50,20);
+    		total.setBounds(550,160,80,20);
     		compute_FP_button.setBounds(10,200,180,20);
     		VAF_button.setBounds(10,240,180,20);
     		compute_code_size_button.setBounds(10,280,180,20);
     		change_language_button.setBounds(10,320,180,20);
     		currentLanguage.setBounds(240,280,140,20);
     		languageField.setBounds(380,280,100,20);
-    		FPField.setBounds(550,200,50,20);
-    		VAFField.setBounds(550,240,50,20);
-    		CodeSizeField.setBounds(550,280,50,20);
+    		FPField.setBounds(550,200,120,20);
+    		VAFField.setBounds(550,240,80,20);
+    		CodeSizeField.setBounds(550,280,120,20);
     		
     		// add to panel
     		panel.add(id[EI].label);

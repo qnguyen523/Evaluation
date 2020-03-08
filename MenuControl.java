@@ -18,11 +18,14 @@ public class MenuControl {
     private JMenuItem[] file_option = new JMenuItem[4];
     
     private JFrame frame;
-    private String projectName;
     
     public String text = new String();
     public FPModel fp = new FPModel();
     LanguageItemListener lanItem = new LanguageItemListener();
+    
+    // back-end
+    public JTextField languageField = new JTextField(2);
+
     // constructor
     public MenuControl(String projectName) { 
     	frame = new JFrame(projectName);
@@ -61,7 +64,8 @@ public class MenuControl {
     	
     	// create menu items for preferences
     	preferences_option1 = new JMenuItem("Language");
-    	lanItem.setField(fp, text);
+    	// could add languageField here to change language
+    	lanItem.setFields(fp, text, languageField);
     	preferences_option1.addActionListener(lanItem);
     	
     	// add to preferences
@@ -71,7 +75,7 @@ public class MenuControl {
     	metrics_option1 = new JMenuItem("Function Points");
     	// add ActionListener for metrics
     	FunctionPointItemListener fpItem = new FunctionPointItemListener();
-    	fpItem.setFields(lanItem,frame,fp);
+    	fpItem.setFields(lanItem,frame,fp,languageField);
     	metrics_option1.addActionListener(fpItem);
 
     	// add to metrics
