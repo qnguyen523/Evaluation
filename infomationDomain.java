@@ -1,9 +1,8 @@
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
+import java.awt.event.*;
+import java.io.*;
 import javax.swing.*;
 
-public class infomationDomain {
+public class infomationDomain implements Serializable {
 	final private int SIMPLE = 0, AVERAGE = 1, COMPLEX = 2;
 	public JLabel label;
 	public JTextField input;
@@ -14,6 +13,9 @@ public class infomationDomain {
 	public infomationDomain(int average) {
 		radioButtons = new JRadioButton[3];
 		complexity_value = average;
+		// create objects
+		input = new JTextField("0", 2);
+		output = new JTextField("0", 2);
 	}
 	public void addToGroup(ButtonGroup x, JRadioButton[] y) {
 		group = x;

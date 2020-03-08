@@ -6,8 +6,7 @@ import javax.swing.*;
     public class FunctionPointItemListener implements ActionListener {
     	
     	final private int SIMPLE = 0, AVERAGE = 1, COMPLEX = 2;
-    	protected JTabbedPane tabPane = new JTabbedPane();
-    	
+    	protected JTabbedPane tabPane;// = new JTabbedPane();
         
         final int EI = 0, EO = 1, EInq = 2, ILF = 3, EIF = 4;
     	public JTextField VAFField = new JTextField(2);
@@ -17,11 +16,19 @@ import javax.swing.*;
     	FPModel fp;
     	infomationDomain[] id;// = new infomationDomain[5];
     	JTextField languageField = new JTextField(2);
-    	public void setFields(LanguageItemListener lanItem, JFrame frame, FPModel fp,JTextField languageField) {
+    	SaveModel saveObject;// = new SaveModel();
+    	public void setFields(LanguageItemListener lanItem, JFrame frame, FPModel fp,
+    			JTextField languageField,SaveModel saveObject, JTabbedPane tabPane) {
     		this.lanItem=lanItem;
     		this.frame=frame;
     		this.fp=fp;
+    		
+    		// to take effect when change language 
 //    		this.languageField=languageField;
+    		
+    		this.saveObject=saveObject;
+    		this.saveObject.id=this.id;
+    		this.tabPane=tabPane;
     	}
     	public void actionPerformed(ActionEvent e) {
     		languageField = new JTextField(2);
@@ -80,6 +87,7 @@ import javax.swing.*;
     	
     	public void functionPoint(JPanel panel) {
     		id = new infomationDomain[5];
+//    		saveObject.id=id;
     		// objects
     		id[EI] = new infomationDomain(4);
     		id[EO] = new infomationDomain(5);
@@ -273,5 +281,14 @@ import javax.swing.*;
     		ComputeSize sizeItem = new ComputeSize(); 
     		sizeItem.setFields(fp,CodeSizeField);
     		compute_code_size_button.addActionListener(sizeItem);
+
+    		// save fields
+    		saveObject.id = id;
+    		saveObject.languageField = languageField;
+    		saveObject.total = total;
+    		saveObject.FPField = FPField;
+    		saveObject.VAFField = VAFField;
+    		saveObject.CodeSizeField = CodeSizeField;
+    		
     	}
     }

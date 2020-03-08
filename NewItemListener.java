@@ -14,8 +14,9 @@ import javax.swing.JTextField;
 public class NewItemListener implements ActionListener {
     	public String projectNameField;
     	JFrame frame;
-    	public void setField(JFrame frame) {
-    		this.frame=frame;
+    	ProjectInfoModel projectInfo;// = new ProjectInfoModel(); 
+    	public void setFields(JFrame frame,ProjectInfoModel projectInfo) {
+    		this.frame=frame;this.projectInfo=projectInfo;
     	}
     	public void actionPerformed(ActionEvent e) {       
     		projectNameField = "";
@@ -30,33 +31,35 @@ public class NewItemListener implements ActionListener {
     		JLabel creator = new JLabel("Creator: ");
     		JLabel comments = new JLabel("Comments: ");
     		// JTextField
-    		JTextField newProjectText = new JTextField("Project Name cannot be empty", 5);
-    		newProjectText.setForeground(Color.GRAY);
-    		newProjectText.addFocusListener(new FocusListener() {
+//    		JTextField newProjectText = new JTextField("Project Name cannot be empty", 5);
+    		projectInfo.newProjectText = new JTextField("Project Name cannot be empty", 5);
+    		
+    		projectInfo.newProjectText.setForeground(Color.GRAY);
+    		projectInfo.newProjectText.addFocusListener(new FocusListener() {
     			@Override
     			public void focusGained(FocusEvent e) {
-    				if(newProjectText.getText().equals("Project Name cannot be empty")
+    				if(projectInfo.newProjectText.getText().equals("Project Name cannot be empty")
     						&& projectNameField.isEmpty())
     				{
-    					newProjectText.setText("");
-    					newProjectText.setForeground(Color.BLACK);
+    					projectInfo.newProjectText.setText("");
+    					projectInfo.newProjectText.setForeground(Color.BLACK);
     				}
 
     			}
     			@Override
     			public void focusLost(FocusEvent e) {
-    				if (newProjectText.getText().isEmpty()) {
-    					newProjectText.setForeground(Color.GRAY);
-    					newProjectText.setText("Project Name cannot be empty");
+    				if (projectInfo.newProjectText.getText().isEmpty()) {
+    					projectInfo.newProjectText.setForeground(Color.GRAY);
+    					projectInfo.newProjectText.setText("Project Name cannot be empty");
     					projectNameField = "";
     				}
-    				else projectNameField = newProjectText.getText();
+    				else projectNameField = projectInfo.newProjectText.getText();
     			}
     		});
 
-    		JTextField productNameText = new JTextField(5);
-    		JTextField creatorText = new JTextField(5);
-    		JTextArea commentTextArea = new JTextArea();
+//    		JTextField productNameText = new JTextField(5);
+//    		JTextField creatorText = new JTextField(5);
+//    		JTextArea commentTextArea = new JTextArea();
     		// buttons
     		Button OKButton = new Button("OK");
     		Button CancelButton = new Button("Cancel");
@@ -89,16 +92,16 @@ public class NewItemListener implements ActionListener {
     		newProject.setBounds(50,20,250,20);
 
     		projectName.setBounds(10,60,250,20);
-    		newProjectText.setBounds(110,60,250,20);
+    		projectInfo.newProjectText.setBounds(110,60,250,20);
 
     		productName.setBounds(10,90,250,20);
-    		productNameText.setBounds(110,90,250,20);
+    		projectInfo.productNameText.setBounds(110,90,250,20);
 
     		creator.setBounds(10,120,250,20);
-    		creatorText.setBounds(110,120,250,20);
+    		projectInfo.creatorText.setBounds(110,120,250,20);
 
     		comments.setBounds(10,150,250,20);
-    		commentTextArea.setBounds(10,170,500,200);
+    		projectInfo.commentTextArea.setBounds(10,170,500,200);
 
     		OKButton.setBounds(10,400,70,20);
     		CancelButton.setBounds(90,400,70,20);
@@ -106,16 +109,16 @@ public class NewItemListener implements ActionListener {
     		newProjectFrame.add(newProject);
 
     		newProjectFrame.add(projectName);
-    		newProjectFrame.add(newProjectText);
+    		newProjectFrame.add(projectInfo.newProjectText);
 
     		newProjectFrame.add(productName);
-    		newProjectFrame.add(productNameText);
+    		newProjectFrame.add(projectInfo.productNameText);
 
     		newProjectFrame.add(creator);
-    		newProjectFrame.add(creatorText);
+    		newProjectFrame.add(projectInfo.creatorText);
 
     		newProjectFrame.add(comments);
-    		newProjectFrame.add(commentTextArea);
+    		newProjectFrame.add(projectInfo.commentTextArea);
 
     		newProjectFrame.add(OKButton);
     		newProjectFrame.add(CancelButton);

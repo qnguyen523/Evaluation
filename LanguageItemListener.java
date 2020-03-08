@@ -6,8 +6,11 @@ public class LanguageItemListener implements ActionListener  {
 	FPModel fp;
 	String text;
 	JTextField languageField;
-	public void setFields(FPModel fp, String text, JTextField languageField) {
+	SaveModel saveObject;
+	public void setFields(FPModel fp, String text, JTextField languageField,SaveModel saveObject) {
 		this.fp=fp;this.text=text;this.languageField=languageField;
+		this.saveObject=saveObject;
+		this.saveObject.languageField=this.languageField;
 	}
 	// constructor
 	public LanguageItemListener() {
@@ -133,6 +136,10 @@ public class LanguageItemListener implements ActionListener  {
 					text = "JAVA";
 					languageField.setText("JAVA");
     	    		newProjectFrame.dispose();
+
+    	    		// test
+    	    		System.out.print(saveObject.languageField.getText());
+    	    		
     	    		return;
     			}
     			else if (checkBoxes[9].isSelected())  {

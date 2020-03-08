@@ -6,26 +6,24 @@ import javax.swing.*;
 public class MenuControl {
 	// menubar 
     private JMenuBar menuBar; 
-  
     // JMenu 
     private JMenu file, edit, preferences, metrics, help;
-  
     // Menu items 
     // code factoring MenuItem extends JMenuItem
     private JMenuItem preferences_option1,
     					metrics_option1;
-    
     private JMenuItem[] file_option = new JMenuItem[4];
-    
     private JFrame frame;
-    
     public String text = new String();
     public FPModel fp = new FPModel();
-    LanguageItemListener lanItem = new LanguageItemListener();
-    
     // back-end
     public JTextField languageField = new JTextField(2);
 
+    // save and open operation
+    SaveModel saveObject = new SaveModel();
+    ProjectInfoModel projectInfo = new ProjectInfoModel();
+    JTabbedPane tabPane = new JTabbedPane();;
+    
     // constructor
     public MenuControl(String projectName) { 
     	frame = new JFrame(projectName);
@@ -50,10 +48,25 @@ public class MenuControl {
     	file_option[2] = new JMenuItem("Save"); 
     	file_option[3] = new JMenuItem("Exit");
     	
-    	// add ActionListener to JMenu file_option[0]
+    	// add ActionListener to JMenu file_option[0]: New operation
     	NewItemListener newItem = new NewItemListener();
-    	newItem.setField(frame);
+    	newItem.setFields(frame, projectInfo);
     	file_option[0].addActionListener(newItem);
+    	
+    	// add ActionListener to JMenu file_option[2]: Save operation
+    	SaveItemListener saveItem = new SaveItemListener();
+    	saveItem.setFields(saveObject, projectInfo,frame);
+    	file_option[2].addActionListener(saveItem);
+    	
+    	// add ActionListener to JMenu file_option[1]: Open operation
+    	OpenItemListener openItem = new OpenItemListener();
+    	openItem.setFields(saveObject,tabPane,frame);
+    	file_option[1].addActionListener(openItem);
+    	
+    	// add ActionListener to JMenu file_option[1]: Open operation
+    	ExitItemListener exitItem = new ExitItemListener();
+    	exitItem.setFields(frame);
+    	file_option[3].addActionListener(exitItem);
     	
     	// add to JMenu file
     	file.add(file_option[0]);
@@ -65,7 +78,8 @@ public class MenuControl {
     	// create menu items for preferences
     	preferences_option1 = new JMenuItem("Language");
     	// could add languageField here to change language
-    	lanItem.setFields(fp, text, languageField);
+    	LanguageItemListener lanItem = new LanguageItemListener();
+    	lanItem.setFields(fp, text, languageField,saveObject);
     	preferences_option1.addActionListener(lanItem);
     	
     	// add to preferences
@@ -75,7 +89,7 @@ public class MenuControl {
     	metrics_option1 = new JMenuItem("Function Points");
     	// add ActionListener for metrics
     	FunctionPointItemListener fpItem = new FunctionPointItemListener();
-    	fpItem.setFields(lanItem,frame,fp,languageField);
+    	fpItem.setFields(lanItem,frame,fp,languageField,saveObject,tabPane);
     	metrics_option1.addActionListener(fpItem);
 
     	// add to metrics
@@ -89,21 +103,3 @@ public class MenuControl {
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
