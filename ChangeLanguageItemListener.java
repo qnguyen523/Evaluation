@@ -68,73 +68,73 @@ public class ChangeLanguageItemListener implements ActionListener  {
 			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent e) {
 				if (checkBoxes[0].isSelected()) {
-					fp.currentLanguge = FPModel.LANGUAGE.ASSEMBLER;
+					fp.currentLanguage = FPModel.LANGUAGE.ASSEMBLER;
 					languageField.setText("ASSEMBLER");
 					newProjectFrame.dispose();
 					return;
 				}
 				else if (checkBoxes[1].isSelected())  {
-					fp.currentLanguge = FPModel.LANGUAGE.ADA_95;
+					fp.currentLanguage = FPModel.LANGUAGE.ADA_95;
 					languageField.setText("ADA 95");
 					newProjectFrame.dispose();
 					return;
 				}
 				else if (checkBoxes[2].isSelected())  {
-					fp.currentLanguge = FPModel.LANGUAGE.CL;
+					fp.currentLanguage = FPModel.LANGUAGE.CL;
 					languageField.setText("C");
 					newProjectFrame.dispose();
 					return;
 				}
 				else if (checkBoxes[3].isSelected())  {
-					fp.currentLanguge = FPModel.LANGUAGE.CLPLUS;
+					fp.currentLanguage = FPModel.LANGUAGE.CLPLUS;
 					languageField.setText("C++");
 					newProjectFrame.dispose();
 					return;
 				}
 				else if (checkBoxes[4].isSelected())  {
-					fp.currentLanguge = FPModel.LANGUAGE.CSHARP;
+					fp.currentLanguage = FPModel.LANGUAGE.CSHARP;
 					languageField.setText("C#");
 					newProjectFrame.dispose();
 					return;
 				}
 				else if (checkBoxes[5].isSelected())  {
-					fp.currentLanguge = FPModel.LANGUAGE.COBOL;
+					fp.currentLanguage = FPModel.LANGUAGE.COBOL;
 					languageField.setText("COBOL");
 					newProjectFrame.dispose();
 					return;
 				}
 				else if (checkBoxes[6].isSelected())  {
-					fp.currentLanguge = FPModel.LANGUAGE.FORTRAN;
+					fp.currentLanguage = FPModel.LANGUAGE.FORTRAN;
 					languageField.setText("FORTRAN");
 					newProjectFrame.dispose();
 					return;
 				}
 				else if (checkBoxes[7].isSelected())  {
-					fp.currentLanguge = FPModel.LANGUAGE.HTML;
+					fp.currentLanguage = FPModel.LANGUAGE.HTML;
 					languageField.setText("HTML");
 					newProjectFrame.dispose();
 					return;
 				}
 				else if (checkBoxes[8].isSelected())  {
-					fp.currentLanguge = FPModel.LANGUAGE.JAVA;
+					fp.currentLanguage = FPModel.LANGUAGE.JAVA;
 					languageField.setText("JAVA");
 					newProjectFrame.dispose();
 					return;
 				}
 				else if (checkBoxes[9].isSelected())  {
-					fp.currentLanguge = FPModel.LANGUAGE.JAVASCRIPT;
+					fp.currentLanguage = FPModel.LANGUAGE.JAVASCRIPT;
 					languageField.setText("JAVASCRIPT");
 					newProjectFrame.dispose();
 					return;
 				}
 				else if (checkBoxes[10].isSelected())  {
-					fp.currentLanguge = FPModel.LANGUAGE.VBSCRIPT;
+					fp.currentLanguage = FPModel.LANGUAGE.VBSCRIPT;
 					languageField.setText("VBSCRIPT");
 					newProjectFrame.dispose();
 					return;
 				}
 				else if (checkBoxes[11].isSelected())  {
-					fp.currentLanguge = FPModel.LANGUAGE.VISUAL_BASIC;
+					fp.currentLanguage = FPModel.LANGUAGE.VISUAL_BASIC;
 					languageField.setText("VISUAL_BASIC");
 					newProjectFrame.dispose();
 					return;

@@ -124,11 +124,11 @@ public class OpenItemListener implements ActionListener{
 		JLabel totalCount = new JLabel("Total Count");
 		
 		// disable editing input
-		saveObject.id[EI].input.setEditable(false);
-		saveObject.id[EO].input.setEditable(false);
-		saveObject.id[EInq].input.setEditable(false);
-		saveObject.id[ILF].input.setEditable(false);
-		saveObject.id[EIF].input.setEditable(false);
+//		saveObject.id[EI].input.setEditable(false);
+//		saveObject.id[EO].input.setEditable(false);
+//		saveObject.id[EInq].input.setEditable(false);
+//		saveObject.id[ILF].input.setEditable(false);
+//		saveObject.id[EIF].input.setEditable(false);
 		
 		// setbounds
 		saveObject.id[EI].label.setBounds(10,50,180,20);
@@ -216,32 +216,26 @@ public class OpenItemListener implements ActionListener{
 		panel.add(totalCount);
 		panel.add(saveObject.total);
 		
-		compute_FP_button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String msg = "Sorry. This operation is not allowed because this is a saved file";
-				JOptionPane.showMessageDialog(null, msg, "Alert", JOptionPane.ERROR_MESSAGE);
-			}
-		});
+		// compute fp
+		FPModel fp = new FPModel();
+		ComputeFP fpItem = new ComputeFP(); 
+		VafValue vaf_total_value = new VafValue();
+		fpItem.setFields(fp,saveObject.id,saveObject.total,saveObject.VAFField,vaf_total_value,saveObject.FPField);
+		compute_FP_button.addActionListener(fpItem);
 		
-		VAF_button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String msg = "Sorry. This operation is not allowed because this is a saved file";
-				JOptionPane.showMessageDialog(null, msg, "Alert", JOptionPane.ERROR_MESSAGE);
-			}
-		});
+		// vaf frame
+		vafActionListener vafItem = new vafActionListener();
+		vafItem.setFields(vaf_total_value, saveObject.VAFField);
+		VAF_button.addActionListener(vafItem);
 		
-		compute_code_size_button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String msg = "Sorry. This operation is not allowed because this is a saved file";
-				JOptionPane.showMessageDialog(null, msg, "Alert", JOptionPane.ERROR_MESSAGE);
-			}
-		});
+		// change language
+		ChangeLanguageItemListener changeLanItem = new ChangeLanguageItemListener();
+		changeLanItem.setFields(fp,saveObject.languageField);
+		change_language_button.addActionListener(changeLanItem);
 		
-		change_language_button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String msg = "Sorry. This operation is not allowed because this is a saved file";
-				JOptionPane.showMessageDialog(null, msg, "Alert", JOptionPane.ERROR_MESSAGE);
-			}
-		});
+		// compute size
+		ComputeSizeFromSave sizeItem = new ComputeSizeFromSave(); 
+		sizeItem.setFields(fp,saveObject.CodeSizeField,saveObject.languageField);
+		compute_code_size_button.addActionListener(sizeItem);
 	}
 }

@@ -5,7 +5,7 @@ public class FPModel {
 	    ASSEMBLER,ADA_95,CL,CLPLUS,CSHARP,COBOL,FORTRAN,
 	    	HTML,JAVA,JAVASCRIPT,VBSCRIPT,VISUAL_BASIC,DEFAULT; 
 	}
-	public LANGUAGE currentLanguge = LANGUAGE.DEFAULT;
+	public LANGUAGE currentLanguage = LANGUAGE.DEFAULT;
 	int LOC;
 	public int EICount,EOCount,EInqCount,ILFCount,EIFCount;
 	public int totalCount;
@@ -26,7 +26,7 @@ public class FPModel {
 		
 	}
 	public void selectLanguageSize() {
-		switch(currentLanguge) {
+		switch(currentLanguage) {
 		case ASSEMBLER:
 			LOC = 209;
 			break;
@@ -74,6 +74,43 @@ public class FPModel {
 	}
 	public int computeCodeSize() {
 		selectLanguageSize();
+		return (int) Math.round(LOC*fp);
+	}
+	public void selectLanguageSize(JTextField languageField) {
+		String hold = languageField.getText();
+		
+		// no language is selected when opening a new tab
+		if (hold.equals("ASSEMBLER")) {
+			LOC = 209;
+		} else if (hold.equals("ADA 95")) {
+			LOC = 154;
+		} else if (hold.equals("C")) {
+			LOC = 148;
+		} else if (hold.equals("C++")) {
+			LOC = 59;
+		} else if (hold.equals("C#")) {
+			LOC = 58;
+		} else if (hold.equals("COBOL")) {
+			LOC = 80;
+		} else if (hold.equals("FORTRAN")) {
+			LOC = 90;
+		} else if (hold.equals("HTML")) {
+			LOC = 43;
+		} else if (hold.equals("JAVA")) {
+			LOC = 55;
+		} else if (hold.equals("JAVASCRIPT")) {
+			LOC = 54;
+		} else if (hold.equals("VBSCRIPT")) {
+			LOC = 38;
+		} else if (hold.equals("VISUAL_BASIC")) {
+			LOC = 50;
+		} else {
+			LOC = 0;
+		}		
+				
+	}
+	public int computeCodeSizeFromSave(JTextField languageField) {
+		selectLanguageSize(languageField);
 		return (int) Math.round(LOC*fp);
 	}
 }

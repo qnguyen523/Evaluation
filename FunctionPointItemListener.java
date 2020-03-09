@@ -45,31 +45,31 @@ import javax.swing.*;
     		
     		// no language is selected when opening a new tab
     		if (hold.equals("ASSEMBLER")) {
-    			fp.currentLanguge = FPModel.LANGUAGE.ASSEMBLER; 
+    			fp.currentLanguage = FPModel.LANGUAGE.ASSEMBLER; 
     		} else if (hold.equals("ADA 95")) {
-    			fp.currentLanguge = FPModel.LANGUAGE.ADA_95; 
+    			fp.currentLanguage = FPModel.LANGUAGE.ADA_95; 
     		} else if (hold.equals("C")) {
-    			fp.currentLanguge = FPModel.LANGUAGE.CL; 
+    			fp.currentLanguage = FPModel.LANGUAGE.CL; 
     		} else if (hold.equals("C++")) {
-    			fp.currentLanguge = FPModel.LANGUAGE.CLPLUS; 
+    			fp.currentLanguage = FPModel.LANGUAGE.CLPLUS; 
     		} else if (hold.equals("C#")) {
-    			fp.currentLanguge = FPModel.LANGUAGE.CSHARP; 
+    			fp.currentLanguage = FPModel.LANGUAGE.CSHARP; 
     		} else if (hold.equals("COBOL")) {
-    			fp.currentLanguge = FPModel.LANGUAGE.COBOL; 
+    			fp.currentLanguage = FPModel.LANGUAGE.COBOL; 
     		} else if (hold.equals("FORTRAN")) {
-    			fp.currentLanguge = FPModel.LANGUAGE.FORTRAN; 
+    			fp.currentLanguage = FPModel.LANGUAGE.FORTRAN; 
     		} else if (hold.equals("HTML")) {
-    			fp.currentLanguge = FPModel.LANGUAGE.HTML; 
+    			fp.currentLanguage = FPModel.LANGUAGE.HTML; 
     		} else if (hold.equals("JAVA")) {
-    			fp.currentLanguge = FPModel.LANGUAGE.JAVA; 
+    			fp.currentLanguage = FPModel.LANGUAGE.JAVA; 
     		} else if (hold.equals("JAVASCRIPT")) {
-    			fp.currentLanguge = FPModel.LANGUAGE.JAVASCRIPT; 
+    			fp.currentLanguage = FPModel.LANGUAGE.JAVASCRIPT; 
     		} else if (hold.equals("VBSCRIPT")) {
-    			fp.currentLanguge = FPModel.LANGUAGE.VBSCRIPT; 
+    			fp.currentLanguage = FPModel.LANGUAGE.VBSCRIPT; 
     		} else if (hold.equals("VISUAL_BASIC")) {
-    			fp.currentLanguge = FPModel.LANGUAGE.VISUAL_BASIC; 
+    			fp.currentLanguage = FPModel.LANGUAGE.VISUAL_BASIC; 
     		} else {
-    			fp.currentLanguge = FPModel.LANGUAGE.DEFAULT; 
+    			fp.currentLanguage = FPModel.LANGUAGE.DEFAULT; 
     		}
     		
     		JPanel panel = new JPanel();

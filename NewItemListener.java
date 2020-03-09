@@ -124,6 +124,6 @@ public class NewItemListener implements ActionListener {
     		newProjectFrame.add(CancelButton);
 
     		// testing
-    		newProjectFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//    		newProjectFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	}    
     }
