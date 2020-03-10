@@ -1,4 +1,7 @@
 import javax.swing.*;
+/*
+ * This class allows users to compute fp and code size
+ */
 public class FPModel {
 	public enum LANGUAGE 
 	{ 
@@ -14,17 +17,19 @@ public class FPModel {
 	public FPModel() {
 		EICount=EOCount=EInqCount=ILFCount=EIFCount=totalCount=0;
 	}
-	// computer total count
+	// compute total count
 	public int computeTotal() { 
 		return EICount+EOCount+EInqCount+ILFCount+EIFCount;
 	}
-	// fp = total_count * [0.65 + 0.01 sum(f_i)]
+	// compute fp
 	public double computeFP(int vaf_total_value) {
+		// fp = total_count * [0.65 + 0.01 sum(f_i)]
 		totalCount = computeTotal();
 		fp = totalCount * (0.65 + 0.01 * vaf_total_value);
 		return fp;
 		
 	}
+	// select language
 	public void selectLanguageSize() {
 		switch(currentLanguage) {
 		case ASSEMBLER:
@@ -72,10 +77,12 @@ public class FPModel {
 			break;
 		}
 	}
+	// compute total count
 	public int computeCodeSize() {
 		selectLanguageSize();
 		return (int) Math.round(LOC*fp);
 	}
+	// select language from save
 	public void selectLanguageSize(JTextField languageField) {
 		String hold = languageField.getText();
 		
@@ -109,6 +116,7 @@ public class FPModel {
 		}		
 				
 	}
+	// compute code size from save
 	public int computeCodeSizeFromSave(JTextField languageField) {
 		selectLanguageSize(languageField);
 		return (int) Math.round(LOC*fp);

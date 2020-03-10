@@ -3,6 +3,9 @@ import java.io.*;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+/*
+ * This class is to save the object saveObject
+ */
 public class SaveItemListener implements ActionListener{
 	SaveModel saveObject;
 	ProjectInfoModel projectInfo;
@@ -13,6 +16,7 @@ public class SaveItemListener implements ActionListener{
 		this.frame=frame;
 	}
 	public void actionPerformed(ActionEvent e) {
+		// save file based on projectName and creatorName
 		String projectName = projectInfo.newProjectText.getText();
 		String creatorName = projectInfo.creatorText.getText();
 		creatorName = creatorName.equals("") ? "" : "_"+ creatorName;

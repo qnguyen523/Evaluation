@@ -2,23 +2,29 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.event.*;
 import java.io.*;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.filechooser.*;
+/*
+ * This class is to open file to load a new tab
+ */
 public class OpenItemListener implements ActionListener{
 	final private int SIMPLE = 0, AVERAGE = 1, COMPLEX = 2;
     final int EI = 0, EO = 1, EInq = 2, ILF = 3, EIF = 4;
 	SaveModel saveObject;
 	JTabbedPane tabPane;
 	JFrame frame;
+	// set fields
 	public void setFields(SaveModel saveObject,JTabbedPane tabPane,JFrame frame) {
 		this.saveObject=saveObject;
 		this.tabPane=tabPane;
 		this.frame=frame;
 	}
+	// when open button is clicked
 	public void actionPerformed(ActionEvent e) {
+		// for testing purpose
 		File f = new File("/Users/Peter/Documents/workspace2/Metrics-Suite/");
 //		File f = new File("/");
+		
 		JFileChooser inputFile=new JFileChooser(f);
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(".ms", "ms");
 		inputFile.setFileFilter(filter);
@@ -37,7 +43,7 @@ public class OpenItemListener implements ActionListener{
 				i.printStackTrace();
 				return;
 			} catch (ClassNotFoundException c) {
-				System.out.println("Saved data not found");
+				System.out.println("Saved data is not found");
 				c.printStackTrace();
 				return;
 			}
@@ -47,7 +53,6 @@ public class OpenItemListener implements ActionListener{
 		else {
 			return;
 		}
-		
 	}
 	// take care of function point
 	public void functionPoint() {
@@ -57,53 +62,49 @@ public class OpenItemListener implements ActionListener{
 		frame.getContentPane().add(tabPane, BorderLayout.CENTER);
 		frame.setVisible(true);
 		panel.setLayout(null);
+
 		// labels
 		JLabel weightingFactors = new JLabel("Weighting Factors", JLabel.CENTER);
 		JLabel simple = new JLabel("Simple   Average   Complex", JLabel.CENTER);
 
-		// setbounds
+		// set bounds
 		weightingFactors.setBounds(0,10,800,20);
 		simple.setBounds(0,30,800,20);
 
 		// add to panel
 		panel.add(weightingFactors);
 		panel.add(simple);
-		
-		// test
-		System.out.println(saveObject.id[EI].complexity_value);
-		
+
+		// labels
 		saveObject.id[EI].label = new JLabel("External Inputs");
 		saveObject.id[EO].label = new JLabel("External Outputs");
 		saveObject.id[EInq].label = new JLabel("External Inquiries");
 		saveObject.id[ILF].label = new JLabel("Internal Logical Files");
 		saveObject.id[EIF].label = new JLabel("External Interface Files");
 		
+		// complexity values or weighting factors 
 		int hold = saveObject.id[EI].complexity_value;
 		saveObject.id[EI].radioButtons[SIMPLE] = new JRadioButton("3",3==hold? true : false);
-		saveObject.id[EI].radioButtons[AVERAGE] = new JRadioButton("4", 4==hold? true : false);
+		saveObject.id[EI].radioButtons[AVERAGE] = new JRadioButton("4",4==hold? true : false);
 		saveObject.id[EI].radioButtons[COMPLEX] = new JRadioButton("6",6==hold? true : false);
-		
 		hold = saveObject.id[EO].complexity_value;
 		saveObject.id[EO].radioButtons[SIMPLE] = new JRadioButton("4",4==hold? true : false);
-		saveObject.id[EO].radioButtons[AVERAGE] = new JRadioButton("5", 5==hold? true : false);
+		saveObject.id[EO].radioButtons[AVERAGE] = new JRadioButton("5",5==hold? true : false);
 		saveObject.id[EO].radioButtons[COMPLEX] = new JRadioButton("7",7==hold? true : false);
-		
 		hold = saveObject.id[EInq].complexity_value;
 		saveObject.id[EInq].radioButtons[SIMPLE] = new JRadioButton("3",3==hold? true : false);
 		saveObject.id[EInq].radioButtons[AVERAGE] = new JRadioButton("4", 4==hold? true : false);
 		saveObject.id[EInq].radioButtons[COMPLEX] = new JRadioButton("6",6==hold? true : false);
-		
 		hold = saveObject.id[ILF].complexity_value;
 		saveObject.id[ILF].radioButtons[SIMPLE] = new JRadioButton("7",7==hold? true : false);
-		saveObject.id[ILF].radioButtons[AVERAGE] = new JRadioButton("10", 10==hold? true : false);
+		saveObject.id[ILF].radioButtons[AVERAGE] = new JRadioButton("10",10==hold? true : false);
 		saveObject.id[ILF].radioButtons[COMPLEX] = new JRadioButton("15",15==hold? true : false);
-		
 		hold = saveObject.id[EIF].complexity_value;
 		saveObject.id[EIF].radioButtons[SIMPLE] = new JRadioButton("5",5==hold? true : false);
-		saveObject.id[EIF].radioButtons[AVERAGE] = new JRadioButton("7", 7==hold? true : false);
+		saveObject.id[EIF].radioButtons[AVERAGE] = new JRadioButton("7",7==hold? true : false);
 		saveObject.id[EIF].radioButtons[COMPLEX] = new JRadioButton("10",10==hold? true : false);
 		
-		// group the radio button
+		// group the radio buttons
 		saveObject.id[EI].group = new ButtonGroup();
 		saveObject.id[EI].addToGroup(saveObject.id[EI].group, saveObject.id[EI].radioButtons);
 		saveObject.id[EO].group = new ButtonGroup();
@@ -122,13 +123,6 @@ public class OpenItemListener implements ActionListener{
 		Button change_language_button = new Button("Change Language");
 		JLabel currentLanguage = new JLabel("Current Language");
 		JLabel totalCount = new JLabel("Total Count");
-		
-		// disable editing input
-//		saveObject.id[EI].input.setEditable(false);
-//		saveObject.id[EO].input.setEditable(false);
-//		saveObject.id[EInq].input.setEditable(false);
-//		saveObject.id[ILF].input.setEditable(false);
-//		saveObject.id[EIF].input.setEditable(false);
 		
 		// setbounds
 		saveObject.id[EI].label.setBounds(10,50,180,20);
@@ -220,12 +214,13 @@ public class OpenItemListener implements ActionListener{
 		FPModel fp = new FPModel();
 		ComputeFP fpItem = new ComputeFP(); 
 		VafValue vaf_total_value = new VafValue();
-		fpItem.setFields(fp,saveObject.id,saveObject.total,saveObject.VAFField,vaf_total_value,saveObject.FPField);
+		fpItem.setFields(fp,saveObject.id,saveObject.total,saveObject.VAFField,
+				vaf_total_value,saveObject.FPField);
 		compute_FP_button.addActionListener(fpItem);
 		
 		// vaf frame
 		vafActionListener vafItem = new vafActionListener();
-		vafItem.setFields(vaf_total_value, saveObject.VAFField);
+		vafItem.setFields(vaf_total_value, saveObject.VAFField,saveObject.vaf_array);
 		VAF_button.addActionListener(vafItem);
 		
 		// change language

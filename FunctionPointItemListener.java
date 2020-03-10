@@ -1,46 +1,45 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
-// class FunctionPoint
+/*
+ * This class is to compute function point
+ */
     public class FunctionPointItemListener implements ActionListener {
-    	
     	final private int SIMPLE = 0, AVERAGE = 1, COMPLEX = 2;
-    	protected JTabbedPane tabPane;// = new JTabbedPane();
-        
-        final int EI = 0, EO = 1, EInq = 2, ILF = 3, EIF = 4;
-    	public JTextField VAFField = new JTextField(2);
+    	final int EI = 0, EO = 1, EInq = 2, ILF = 3, EIF = 4;
+
+    	JTabbedPane tabPane;
+    	JTextField VAFField = new JTextField(2);
     	VafValue vaf_total_value = new VafValue();
     	LanguageItemListener lanItem;
     	JFrame frame;
     	FPModel fp;
-    	infomationDomain[] id;// = new infomationDomain[5];
+    	infomationDomain[] id;
     	JTextField languageField = new JTextField(2);
-    	SaveModel saveObject;// = new SaveModel();
+    	SaveModel saveObject;
+    	// set fields
     	public void setFields(LanguageItemListener lanItem, JFrame frame, FPModel fp,
     			JTextField languageField,SaveModel saveObject, JTabbedPane tabPane) {
     		this.lanItem=lanItem;
     		this.frame=frame;
     		this.fp=fp;
-    		
-    		// to take effect when change language 
-//    		this.languageField=languageField;
-    		
     		this.saveObject=saveObject;
     		this.saveObject.id=this.id;
     		this.tabPane=tabPane;
     	}
+    	// when Function Points button is clicked
     	public void actionPerformed(ActionEvent e) {
     		languageField = new JTextField(2);
     		String hold = lanItem.text;
     		
-    		System.out.println("hold");
+    		// testing
     		if (hold.equals("")) {
     			JOptionPane.showMessageDialog(null, "Please choose a language", "Alert", JOptionPane.ERROR_MESSAGE);
     			System.err.println("Error");
     			return;
     		}
     		
+    		// do not update language when change language button is clicked
     		languageField.setText(hold); 
     		
     		// no language is selected when opening a new tab
@@ -82,7 +81,7 @@ import javax.swing.*;
     	    JLabel weightingFactors = new JLabel("Weighting Factors", JLabel.CENTER);
     	    JLabel simple = new JLabel("Simple   Average   Complex", JLabel.CENTER);
     	    
-    	    // setbounds
+    	    // set bounds
     	    weightingFactors.setBounds(0,10,800,20);
     	    simple.setBounds(0,30,800,20);
 
@@ -95,7 +94,6 @@ import javax.swing.*;
     	
     	public void functionPoint(JPanel panel) {
     		id = new infomationDomain[5];
-//    		saveObject.id=id;
     		// objects
     		id[EI] = new infomationDomain(4);
     		id[EO] = new infomationDomain(5);
@@ -134,6 +132,7 @@ import javax.swing.*;
     		id[EIF].radioButtons[SIMPLE] = new JRadioButton("5");
     		id[EIF].radioButtons[AVERAGE] = new JRadioButton("7", true);
     		id[EIF].radioButtons[COMPLEX] = new JRadioButton("10");
+
     		// group the radio button
     		id[EI].group = new ButtonGroup();
     		id[EI].addToGroup(id[EI].group, id[EI].radioButtons);
@@ -171,15 +170,13 @@ import javax.swing.*;
     		JLabel totalCount = new JLabel("Total Count");
     		JTextField total = new JTextField(2);
     		total.setEditable(false);
-    		
     		languageField.setEditable(false);
     		JTextField FPField = new JTextField(2);
     		FPField.setEditable(false);
-    		// reset values
+    		// reset vaf value to 0 when opening new tab
     		VAFField = new JTextField("0", 2);
     		vaf_total_value.value = 0;
-//    		fp.currentLanguge = FPModel.LANGUAGE.DEFAULT;
-    		
+
     		VAFField.setEditable(false);
     		JTextField CodeSizeField = new JTextField(2);
     		CodeSizeField.setEditable(false);
@@ -276,8 +273,10 @@ import javax.swing.*;
     		change_language_button.addActionListener(changeLanItem);
 
     		// vaf frame
+			int[] vaf_array = new int[14];
+			for (int i : vaf_array) i=0;
     		vafActionListener vafItem = new vafActionListener();
-    		vafItem.setFields(vaf_total_value, VAFField);
+    		vafItem.setFields(vaf_total_value, VAFField,vaf_array);
     		VAF_button.addActionListener(vafItem);
     		
     		// compute fp
@@ -297,6 +296,6 @@ import javax.swing.*;
     		saveObject.FPField = FPField;
     		saveObject.VAFField = VAFField;
     		saveObject.CodeSizeField = CodeSizeField;
-    		
+    		saveObject.vaf_array=vaf_array;
     	}
     }

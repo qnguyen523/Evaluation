@@ -2,6 +2,7 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
+@SuppressWarnings("serial")
 public class infomationDomain implements Serializable {
 	final private int SIMPLE = 0, AVERAGE = 1, COMPLEX = 2;
 	public JLabel label;

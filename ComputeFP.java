@@ -2,15 +2,18 @@ import java.awt.event.*;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
-
+/*
+ * This class is to compute FP
+ */
 public class ComputeFP implements ActionListener {
-	FPModel fp;
 	final int EI = 0, EO = 1, EInq = 2, ILF = 3, EIF = 4;
-	infomationDomain[] id;
-	JTextField total;
-	JTextField VAFField;
-	VafValue vaf_total_value;
-	JTextField FPField;
+	private FPModel fp;
+	private infomationDomain[] id;
+	private JTextField total;
+	private JTextField VAFField;
+	private VafValue vaf_total_value;
+	private JTextField FPField;
+	// set fields
 	public void setFields(FPModel fp, infomationDomain[] id,JTextField total,
 			JTextField VAFField,VafValue vaf_total_value,JTextField FPField) {
 		this.id=id;
@@ -20,6 +23,7 @@ public class ComputeFP implements ActionListener {
 		this.FPField=FPField;
 		this.fp=fp;
 	}
+	// when a Compute FP button is clicked
 	public void actionPerformed(ActionEvent e) {
 		// take care of information domain values
 		fp.EICount = id[EI].input.getText().equals("") ? 0 : 
@@ -39,11 +43,20 @@ public class ComputeFP implements ActionListener {
 			id[ILF].output.setText(String.valueOf(fp.ILFCount));
 			id[EIF].output.setText(String.valueOf(fp.EIFCount));
 			
-			// compute fp
-			DecimalFormat format = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
-			total.setText(String.valueOf(fp.computeTotal()));
-			FPField.setText(String.valueOf(format.format(fp.computeFP(vaf_total_value.value))));
+			if (vaf_total_value.value==Integer.parseInt(VAFField.getText())) {
+				DecimalFormat format = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+				total.setText(String.valueOf(fp.computeTotal()));
+				FPField.setText(String.valueOf(format.format(fp.computeFP(vaf_total_value.value))));
+			}
+			// from open operation
+			else {
+				DecimalFormat format = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+				total.setText(String.valueOf(fp.computeTotal()));
+				FPField.setText(String.valueOf(format.format(fp.computeFP(Integer.parseInt(VAFField.getText())))));
+			}
+			
 		}
+		// validate input
 		else {
 			// error
 			System.err.println("Error");

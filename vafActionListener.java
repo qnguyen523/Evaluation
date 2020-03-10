@@ -7,11 +7,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-
+// VAF button's ActionListener
 public class vafActionListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
-		JFrame f = new JFrame("Value Adjustment Factors");;
-		
+		JFrame f = new JFrame("Value Adjustment Factors");
 		final JLabel label = new JLabel();
 		final JLabel label1 = new JLabel();
 		final JLabel label2 = new JLabel();
@@ -27,7 +26,9 @@ public class vafActionListener implements ActionListener {
 		final JLabel label12 = new JLabel();
 		final JLabel label13 = new JLabel();
 		final JLabel label14 = new JLabel();
+		
 		String values[] = {"0","1","2","3","4","5"};
+		
 		final JComboBox<String> box1 = new JComboBox<>(values);
 		final JComboBox<String> box2 = new JComboBox<>(values);
 		final JComboBox<String> box3 = new JComboBox<>(values);
@@ -42,6 +43,23 @@ public class vafActionListener implements ActionListener {
 		final JComboBox<String> box12 = new JComboBox<>(values);
 		final JComboBox<String> box13 = new JComboBox<>(values);
 		final JComboBox<String> box14 = new JComboBox<>(values);
+
+		// initilization
+		box1.setSelectedIndex(vaf_array[0]);
+		box2.setSelectedIndex(vaf_array[1]);
+		box3.setSelectedIndex(vaf_array[2]);
+		box4.setSelectedIndex(vaf_array[3]);
+		box5.setSelectedIndex(vaf_array[4]);
+		box6.setSelectedIndex(vaf_array[5]);
+		box7.setSelectedIndex(vaf_array[6]);
+		box8.setSelectedIndex(vaf_array[7]);
+		box9.setSelectedIndex(vaf_array[8]);
+		box10.setSelectedIndex(vaf_array[9]);
+		box11.setSelectedIndex(vaf_array[10]);
+		box12.setSelectedIndex(vaf_array[11]);
+		box13.setSelectedIndex(vaf_array[12]);
+		box14.setSelectedIndex(vaf_array[13]);
+		
 		final JButton vafOkButton = new JButton("DONE");
 		final JButton vafCancelButton = new JButton("Cancel");
 		
@@ -129,42 +147,48 @@ public class vafActionListener implements ActionListener {
 		f.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		f.setLocationRelativeTo(null);
 		f.setVisible(true);
-		
+
+		// when vafOkButton button is clicked
 		vafOkButton.addActionListener(new ActionListener() {  
 	        public void actionPerformed(ActionEvent e) {    
-	        	//Add Code Here
-    			int vaf1 =  Integer.parseInt((String) box1.getItemAt(box1.getSelectedIndex()));
-    			int vaf2 =  Integer.parseInt((String) box2.getItemAt(box2.getSelectedIndex()));
-    			int vaf3 =  Integer.parseInt((String) box3.getItemAt(box3.getSelectedIndex()));
-    			int vaf4 =  Integer.parseInt((String) box4.getItemAt(box4.getSelectedIndex()));
-    			int vaf5 =  Integer.parseInt((String) box5.getItemAt(box5.getSelectedIndex()));
-    			int vaf6 =  Integer.parseInt((String) box6.getItemAt(box6.getSelectedIndex()));
-    			int vaf7 =  Integer.parseInt((String) box7.getItemAt(box7.getSelectedIndex()));
-    			int vaf8 =  Integer.parseInt((String) box8.getItemAt(box8.getSelectedIndex()));
-    			int vaf9 =  Integer.parseInt((String) box9.getItemAt(box9.getSelectedIndex()));
-    			int vaf10 =  Integer.parseInt((String) box10.getItemAt(box10.getSelectedIndex()));
-    			int vaf11 =  Integer.parseInt((String) box11.getItemAt(box11.getSelectedIndex()));
-	        	int vaf12 =  Integer.parseInt((String) box12.getItemAt(box12.getSelectedIndex()));
-	        	int vaf13 =  Integer.parseInt((String) box13.getItemAt(box13.getSelectedIndex()));
-	        	int vaf14 =  Integer.parseInt((String) box14.getItemAt(box14.getSelectedIndex()));
-	        	
-	        	int 	final_ans = vaf1+vaf2+vaf3+vaf4+vaf5+vaf6+vaf7+vaf8+vaf9+vaf10+vaf11+vaf12+vaf13+vaf14; 
+	        	vaf_array[0] =  Integer.parseInt((String) box1.getItemAt(box1.getSelectedIndex()));
+	        	vaf_array[1] =  Integer.parseInt((String) box2.getItemAt(box2.getSelectedIndex()));
+	        	vaf_array[2] =  Integer.parseInt((String) box3.getItemAt(box3.getSelectedIndex()));
+	        	vaf_array[3] =  Integer.parseInt((String) box4.getItemAt(box4.getSelectedIndex()));
+	        	vaf_array[4] =  Integer.parseInt((String) box5.getItemAt(box5.getSelectedIndex()));
+	        	vaf_array[5] =  Integer.parseInt((String) box6.getItemAt(box6.getSelectedIndex()));
+	        	vaf_array[6] =  Integer.parseInt((String) box7.getItemAt(box7.getSelectedIndex()));
+	        	vaf_array[7] =  Integer.parseInt((String) box8.getItemAt(box8.getSelectedIndex()));
+	        	vaf_array[8] =  Integer.parseInt((String) box9.getItemAt(box9.getSelectedIndex()));
+	        	vaf_array[9] =  Integer.parseInt((String) box10.getItemAt(box10.getSelectedIndex()));
+	        	vaf_array[10] =  Integer.parseInt((String) box11.getItemAt(box11.getSelectedIndex()));
+	        	vaf_array[11] =  Integer.parseInt((String) box12.getItemAt(box12.getSelectedIndex()));
+	        	vaf_array[12] =  Integer.parseInt((String) box13.getItemAt(box13.getSelectedIndex()));
+	        	vaf_array[13] =  Integer.parseInt((String) box14.getItemAt(box14.getSelectedIndex()));
+	        	int final_ans =  computeTotal(vaf_array);
 	        	vaf_total_value.value = final_ans;
 	        	JOptionPane.showMessageDialog(f, final_ans, "VAF Total Value", JOptionPane.INFORMATION_MESSAGE);
 	        	VAFField.setText(final_ans+"");
-	        	
 	        	f.dispose();
-	        }  
+	        }
+	        private int computeTotal(int[] vaf_array) {
+	        	int total = 0;
+	        	for (int i : vaf_array) total+=i;
+	        	return total;
+	        }
 		}); 
-		
+		// when vafCancelButton button is clicked
 		vafCancelButton.addActionListener(new ActionListener() {  
 			public void actionPerformed(ActionEvent e) {       
 				f.dispose();
 			}  
 		}); 
 	}
-	public VafValue vaf_total_value; public JTextField VAFField;
-	public void setFields(VafValue vaf_total_value, JTextField VAFField) {
-		this.VAFField=VAFField;this.vaf_total_value=vaf_total_value;
+	private VafValue vaf_total_value; 
+	private JTextField VAFField;
+	private int[] vaf_array;// = new int[14];
+	// set fields
+	public void setFields(VafValue vaf_total_value,JTextField VAFField,int[] vaf_array) {
+		this.VAFField=VAFField;this.vaf_total_value=vaf_total_value;this.vaf_array=vaf_array;
 	}
 }
