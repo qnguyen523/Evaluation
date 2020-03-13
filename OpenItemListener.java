@@ -4,22 +4,27 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 import javax.swing.filechooser.*;
+import java.util.*;
 /*
  * This class is to open file to load a new tab
  */
 public class OpenItemListener implements ActionListener{
 	final private int SIMPLE = 0, AVERAGE = 1, COMPLEX = 2;
     final int EI = 0, EO = 1, EInq = 2, ILF = 3, EIF = 4;
-	SaveModel saveObject;
+//	SaveModel saveObject;
 	JTabbedPane tabPane;
 	JFrame frame;
+	ArrayList<SaveModel> saveObjectArray;
+	
 	// set fields
-	public void setFields(SaveModel saveObject,JTabbedPane tabPane,JFrame frame) {
-		this.saveObject=saveObject;
+	public void setFields(ArrayList<SaveModel> saveObjectArray,JTabbedPane tabPane,JFrame frame) {
+//		this.saveObject=saveObject;
 		this.tabPane=tabPane;
 		this.frame=frame;
+		this.saveObjectArray=saveObjectArray;
 	}
 	// when open button is clicked
+	@SuppressWarnings("unchecked")
 	public void actionPerformed(ActionEvent e) {
 		// for testing purpose
 		File f = new File("/Users/Peter/Documents/workspace2/Metrics-Suite/");
@@ -36,7 +41,7 @@ public class OpenItemListener implements ActionListener{
 			try {
 				FileInputStream fileIn = new FileInputStream(file);
 				ObjectInputStream in = new ObjectInputStream(fileIn);
-				saveObject = (SaveModel) in.readObject();
+				saveObjectArray = (ArrayList<SaveModel>) in.readObject();
 				in.close();
 				fileIn.close();
 			} catch (IOException i) {
@@ -48,14 +53,21 @@ public class OpenItemListener implements ActionListener{
 				return;
 			}
 			
-		    functionPoint();
+			System.out.println(saveObjectArray);
+			
+			while(!saveObjectArray.isEmpty()) {
+				SaveModel saveObject = new SaveModel(); 
+				saveObject = saveObjectArray.remove(0);
+				functionPoint(saveObject);
+			}
+			
 		}
 		else {
 			return;
 		}
 	}
 	// take care of function point
-	public void functionPoint() {
+	public void functionPoint(SaveModel saveObject) {
 		// add a new tab to current panel
 		JPanel panel = new JPanel();
 		tabPane.addTab("Function Points", panel);

@@ -11,10 +11,10 @@ public class LanguageItemListener implements ActionListener  {
 	SaveModel saveObject;
 	ProjectInfoModel projectInfo;
 	// set fields
-	public void setFields(FPModel fp, String text, JTextField languageField,SaveModel saveObject,ProjectInfoModel projectInfo) {
+	public void setFields(FPModel fp, String text, JTextField languageField,ProjectInfoModel projectInfo) {
 		this.fp=fp;this.text=text;this.languageField=languageField;
-		this.saveObject=saveObject;
-		this.saveObject.languageField=this.languageField;
+//		this.saveObject=saveObject;
+//		this.saveObject.languageField=this.languageField;
 		this.projectInfo=projectInfo;
 	}
 	// constructor
@@ -25,7 +25,7 @@ public class LanguageItemListener implements ActionListener  {
     	// a project name must be input before proceeding
     	String hold = projectInfo.newProjectText.getText();
 
-    	// testing
+//    	// testing
     	if(hold.equals("") || hold.equals("Project Name cannot be empty")) {
     		System.err.println("Error. Project Name cannot be empty");
     		JOptionPane.showMessageDialog(null, "Please enter your project name", "Alert", JOptionPane.ERROR_MESSAGE);

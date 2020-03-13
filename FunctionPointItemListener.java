@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.*;
 /*
  * This class is to compute function point
  */
@@ -17,18 +18,22 @@ import javax.swing.*;
     	infomationDomain[] id;
     	JTextField languageField = new JTextField(2);
     	SaveModel saveObject;
+    	ArrayList<SaveModel> saveObjectArray;
     	// set fields
     	public void setFields(LanguageItemListener lanItem, JFrame frame, FPModel fp,
-    			JTextField languageField,SaveModel saveObject, JTabbedPane tabPane) {
+    			JTextField languageField, JTabbedPane tabPane,ArrayList<SaveModel> saveObjectArray) {
     		this.lanItem=lanItem;
     		this.frame=frame;
     		this.fp=fp;
-    		this.saveObject=saveObject;
-    		this.saveObject.id=this.id;
+//    		this.saveObject.id=this.id;
+//    		this.saveObject=saveObject;
     		this.tabPane=tabPane;
+    		this.saveObjectArray=saveObjectArray;
     	}
     	// when Function Points button is clicked
     	public void actionPerformed(ActionEvent e) {
+    		saveObject = new SaveModel();
+    		
     		languageField = new JTextField(2);
     		String hold = lanItem.text;
     		
@@ -286,7 +291,7 @@ import javax.swing.*;
 
     		// compute size
     		ComputeSize sizeItem = new ComputeSize(); 
-    		sizeItem.setFields(fp,CodeSizeField);
+    		sizeItem.setFields(fp,CodeSizeField,saveObject,saveObjectArray);
     		compute_code_size_button.addActionListener(sizeItem);
 
     		// save fields

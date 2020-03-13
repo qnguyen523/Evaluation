@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.util.*;
+
 import javax.swing.*; 
 /*
  * This class is to create a menu bar and to control every operation
@@ -21,9 +23,10 @@ public class MenuControl {
     public JTextField languageField;
 
     // save and open operation
-    SaveModel saveObject;
+//    SaveModel saveObject;
     ProjectInfoModel projectInfo;
     JTabbedPane tabPane;
+    ArrayList<SaveModel> saveObjectArray = new ArrayList<>();
     
     // constructor
     public MenuControl(String projectName) { 
@@ -32,7 +35,8 @@ public class MenuControl {
     	text = new String();
     	fp = new FPModel();
     	languageField = new JTextField(2);
-    	saveObject = new SaveModel();
+    	
+//    	saveObject = new SaveModel();
     	projectInfo = new ProjectInfoModel();
     	tabPane = new JTabbedPane();
     	
@@ -65,12 +69,12 @@ public class MenuControl {
     	
     	// add ActionListener to JMenu file_option[2]: Save operation
     	SaveItemListener saveItem = new SaveItemListener();
-    	saveItem.setFields(saveObject, projectInfo,frame);
+    	saveItem.setFields(saveObjectArray, projectInfo,frame);
     	file_option[2].addActionListener(saveItem);
     	
     	// add ActionListener to JMenu file_option[1]: Open operation
     	OpenItemListener openItem = new OpenItemListener();
-    	openItem.setFields(saveObject,tabPane,frame);
+    	openItem.setFields(saveObjectArray,tabPane,frame);
     	file_option[1].addActionListener(openItem);
     	
     	// add ActionListener to JMenu file_option[1]: Exit operation
@@ -89,7 +93,7 @@ public class MenuControl {
     	
     	// could add languageField here to change language
     	LanguageItemListener lanItem = new LanguageItemListener();
-    	lanItem.setFields(fp, text, languageField,saveObject,projectInfo);
+    	lanItem.setFields(fp, text, languageField,projectInfo);
     	preferences_option1.addActionListener(lanItem);
     	
     	// add to preferences
@@ -100,7 +104,7 @@ public class MenuControl {
     	
     	// add ActionListener for metrics_option1
     	FunctionPointItemListener fpItem = new FunctionPointItemListener();
-    	fpItem.setFields(lanItem,frame,fp,languageField,saveObject,tabPane);
+    	fpItem.setFields(lanItem,frame,fp,languageField,tabPane,saveObjectArray);
     	metrics_option1.addActionListener(fpItem);
 
     	// add to metrics
