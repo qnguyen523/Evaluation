@@ -26,11 +26,11 @@ public class LanguageItemListener implements ActionListener  {
     	String hold = projectInfo.newProjectText.getText();
 
 //    	 testing
-    	if(hold.equals("") || hold.equals("Project Name cannot be empty")) {
-    		System.err.println("Error. Project Name cannot be empty");
-    		JOptionPane.showMessageDialog(null, "Please enter your project name", "Error", JOptionPane.ERROR_MESSAGE);
-    		return;
-    	}
+//    	if(hold.equals("") || hold.equals("Project Name cannot be empty")) {
+//    		System.err.println("Error. Project Name cannot be empty");
+//    		JOptionPane.showMessageDialog(null, "Please enter your project name", "Error", JOptionPane.ERROR_MESSAGE);
+//    		return;
+//    	}
     	
     	JFrame languageFrame=new JFrame("Choose a language");
     	languageFrame.setLayout(null);  

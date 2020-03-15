@@ -70,6 +70,9 @@ public class FPModel {
 			break;
 		case DEFAULT:
 			LOC = 0;
+			System.err.println("Error");
+			JOptionPane.showMessageDialog(null, "Please choose a language", "alert", JOptionPane.ERROR_MESSAGE);
+			break;
 		default:
 			LOC = 0;
 			System.err.println("Error");

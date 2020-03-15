@@ -60,6 +60,7 @@ public class SaveItemListener implements ActionListener{
 		// validate
 		if (table==null || table.getRowCount()==0) {
 			System.err.println("Error with table");
+			JOptionPane.showMessageDialog(null, "You must add SMI panel and save before closing", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		int numOfRows = table.getRowCount();

@@ -32,6 +32,8 @@ public class OpenItemListener implements ActionListener{
 	NumberOfRows number_of_rows_when_saving;
 	ProjectInfoModel projectInfo;
 	SMI_Listener sl;// = new SMI_Listener();
+	IsOpen open;
+	FunctionPointItemListener fpItem;
 	// save
 	public void set_SMI_Listener(SMI_Listener sl) {
 		this.sl=sl;
@@ -46,7 +48,7 @@ public class OpenItemListener implements ActionListener{
 	public void setFields(SavingList saving_list,JTabbedPane tabPane,JFrame frame,
 			DefaultTableModel model,Button addRow,Button computeIndex,AddRow ar,
 			ComputeIndex ci,SaveItemListener saveItem,JTable table,
-			ProjectInfoModel projectInfo) {
+			ProjectInfoModel projectInfo,IsOpen open,FunctionPointItemListener fpItem) {
 //		this.saveObject=saveObject;
 		this.tabPane=tabPane;
 		this.frame=frame;
@@ -59,6 +61,8 @@ public class OpenItemListener implements ActionListener{
 		this.saveItem=saveItem;
 		this.table=table;
 		this.projectInfo=projectInfo;
+		this.open=open;
+		this.fpItem=fpItem;
 	}
 	
 	// create a row
@@ -69,6 +73,7 @@ public class OpenItemListener implements ActionListener{
 	// when open button is clicked
 	@SuppressWarnings("unchecked")
 	public void actionPerformed(ActionEvent e) {
+		open.isOpen=true;
 		// for testing purpose
 		File f = new File("/Users/Peter/Documents/workspace2/Metrics-Suite/");
 //		File f = new File("/");
@@ -82,12 +87,25 @@ public class OpenItemListener implements ActionListener{
 		{
 			File file = inputFile.getSelectedFile();
 			try {
+				
+				/*
+				 * testing to get title
+				System.out.println(file.getName());
+				String s = file.getName();
+				System.out.println(file.getName().split("\\."));
+				String title = frame.getTitle() + " - "+file.getName().split("\\.")[0];
+				frame.setTitle(title);
+				frame.setVisible(true);
+				*/
+				
 				FileInputStream fileIn = new FileInputStream(file);
 				ObjectInputStream in = new ObjectInputStream(fileIn);
 				SavingList temp_saving_list = (SavingList) in.readObject();
 				saveItem.setSavingList(temp_saving_list);
-				
 				this.saving_list=temp_saving_list;
+				
+				fpItem.saveObjectArray=temp_saving_list.saveObjectArray;
+				this.saving_list.saveObjectArray = fpItem.saveObjectArray;
 				in.close();
 				fileIn.close();
 			} catch (IOException i) {
@@ -103,12 +121,12 @@ public class OpenItemListener implements ActionListener{
 			saveObjectArray = new ArrayList<SaveModel>();
 			saveObjectArray = (ArrayList<SaveModel>) saving_list.saveObjectArray.clone();
 //			saving_list.saveObjectArray = new ArrayList<SaveModel>();
-			System.out.println(saveObjectArray);
+//			System.out.println(saveObjectArray);
 			if (saveObjectArray==null) {
 				System.out.println("Error with saveObjectArray");
 				return;
 			}
-			System.out.println(saveObjectArray);
+//			System.out.println(saveObjectArray);
 			for (SaveModel i : saving_list.saveObjectArray) {
 				functionPoint(i);
 			}
@@ -125,7 +143,7 @@ public class OpenItemListener implements ActionListener{
 //			initialize for exit
 			number_of_rows_when_opening.num=number_of_rows_when_saving.num=SMI_list.size();
 					
-			System.out.println(SMI_list);
+//			System.out.println(SMI_list);
 			if (SMI_list==null || SMI_list.isEmpty()) {
 				System.out.println("Error with SMI_List");
 				return;
@@ -175,71 +193,79 @@ public class OpenItemListener implements ActionListener{
 		    panel.add(computeIndex);
 			
 		    // testing
-		    frame.addWindowListener(new WindowAdapter() {
-		    	@Override
-		    	public void windowClosing(WindowEvent e) {
-		    		System.out.println("In OpenItemListener:");
-		    		System.out.println(saveObjectArray);
-		    		System.out.println(SMI_list);
-		    		System.out.println(saving_list.saveObjectArray);
-		    		System.out.println(saving_list.SMI_list);
-		    		System.out.println(number_of_rows_when_opening+" "+number_of_rows_when_saving);
-		    		if (number_of_rows_when_opening.equals(number_of_rows_when_saving)){
-		    			System.out.println("Dispose and exit");
-		    			frame.dispose();
-		    			System.exit(1);
-		    		} else {
-		    			System.out.println("Not equal");
-		    			// not equal
-		    			// save
-		    			String[] options = { "Save", "Discard" };
-		    			String msg = "You must save before closing the application"
-		    					+ "\nDo you want to save the changes made to the SMI panel?";
-		    			int choice = JOptionPane.showOptionDialog(null, msg, "Warning",
-		    					JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-		    					null, options, options[1]);
-		    			if (choice==0) {
-		    				// save
-		    				String projectName = projectInfo.newProjectText.getText();
-		    				String fileName = projectName+".ms";
-		    				if (fileName.equals("Project Name cannot be empty.ms")
-		    						|| fileName.equals(".ms")) {
-		    					JOptionPane.showMessageDialog(frame, "Nothing to be saved. You must have a project name", "Alert", JOptionPane.ERROR_MESSAGE);
-		    					return;
-		    				}
-		    				// save
-		    				try {
-		    					FileOutputStream fileOut = new FileOutputStream(fileName);
-		    					ObjectOutputStream out = new ObjectOutputStream(fileOut);
-		    					out.writeObject(saving_list);
-		    					out.close();
-		    					fileOut.close();
-		    					//       				  JOptionPane.showMessageDialog(frame, "Saved!","Save", JOptionPane.INFORMATION_MESSAGE);
-		    					System.out.println("Serialized data is saved");
-		    					System.out.println(saving_list.saveObjectArray);
-		    					System.out.println(saving_list.SMI_list);
-		    					
-		    					// dispose and exit 
-		    					frame.dispose();
-		    					System.exit(1);
-		    				} catch (IOException i) {
-		    					i.printStackTrace();
-		    				}
-		    				
-		    				// dispose and exit
-//	                	 frame.dispose();
-//	                	 System.exit(1);
-		    			}
-		    			else {
-		    				// "Discard" or Close the dialog
-		    			}
-		    		}
-		    	}
-		    });
+//		    return;
+//		    WindowListener[] a = frame.getWindowListeners();
+//			WindowListener w = a[0];
+//			w.windowClosing(new WindowEvent(frame,WindowEvent.WINDOW_CLOSING));
 		}
 		else {
 			return;
 		}
+		 // testing: backup addWindowListener()
+		/*
+	    frame.addWindowListener(new WindowAdapter() {
+	    	@Override
+	    	public void windowClosing(WindowEvent e) {
+	    		System.out.println("In OpenItemListener:");
+//	    		System.out.println(saveObjectArray);
+//	    		System.out.println(SMI_list);
+	    		System.out.println(saving_list.saveObjectArray);
+	    		System.out.println(saving_list.SMI_list);
+	    		System.out.println(number_of_rows_when_opening+" "+number_of_rows_when_saving);
+	    		if (number_of_rows_when_opening.equals(number_of_rows_when_saving)){
+	    			System.out.println("Dispose and exit");
+	    			frame.dispose();
+	    			System.exit(1);
+	    		} else {
+	    			System.out.println("Not equal");
+	    			// not equal
+	    			// save
+	    			String[] options = { "Save", "Discard" };
+	    			String msg = "You must save before closing the application"
+	    					+ "\nDo you want to save the changes made to the SMI panel?";
+	    			int choice = JOptionPane.showOptionDialog(null, msg, "Warning",
+	    					JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+	    					null, options, options[1]);
+	    			if (choice==0) {
+	    				// save
+	    				String projectName = projectInfo.newProjectText.getText();
+	    				String fileName = projectName+".ms";
+	    				if (fileName.equals("Project Name cannot be empty.ms")
+	    						|| fileName.equals(".ms")) {
+	    					System.err.println("Error in OpenItemListener. Frame.addActionLister()");
+	    					JOptionPane.showMessageDialog(frame, "Nothing to be saved. You must have a project name", "Alert", JOptionPane.ERROR_MESSAGE);
+	    					return;
+	    				}
+	    				// save
+	    				try {
+	    					FileOutputStream fileOut = new FileOutputStream(fileName);
+	    					ObjectOutputStream out = new ObjectOutputStream(fileOut);
+	    					out.writeObject(saving_list);
+	    					out.close();
+	    					fileOut.close();
+	    					//       				  JOptionPane.showMessageDialog(frame, "Saved!","Save", JOptionPane.INFORMATION_MESSAGE);
+	    					System.out.println("Serialized data is saved");
+	    					System.out.println(saving_list.saveObjectArray);
+	    					System.out.println(saving_list.SMI_list);
+	    					
+	    					// dispose and exit 
+	    					frame.dispose();
+	    					System.exit(1);
+	    				} catch (IOException i) {
+	    					i.printStackTrace();
+	    				}
+	    				
+	    				// dispose and exit
+//                	 frame.dispose();
+//                	 System.exit(1);
+	    			}
+	    			else {
+	    				// "Discard" or Close the dialog
+	    			}
+	    		}
+	    	}
+	    });
+	    */
 	}
 	// take care of function point
 	public void functionPoint(SaveModel saveObject) {

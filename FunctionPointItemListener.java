@@ -42,13 +42,14 @@ import java.util.*;
     		
     		languageField = new JTextField(2);
     		String hold = lanItem.text;
+//    		System.out.println(hold);
     		
     		// testing
-    		if (hold.equals("")) {
-    			JOptionPane.showMessageDialog(null, "Please choose a language", "Alert", JOptionPane.ERROR_MESSAGE);
-    			System.err.println("Error");
-    			return;
-    		}
+//    		if (hold.equals("")) {
+//    			JOptionPane.showMessageDialog(null, "Please choose a language", "Alert", JOptionPane.ERROR_MESSAGE);
+//    			System.err.println("Error");
+//    			return;
+//    		}
     		
     		// do not update language when change language button is clicked
     		languageField.setText(hold); 
@@ -76,7 +77,7 @@ import java.util.*;
     			fp.currentLanguage = FPModel.LANGUAGE.JAVASCRIPT; 
     		} else if (hold.equals("VBSCRIPT")) {
     			fp.currentLanguage = FPModel.LANGUAGE.VBSCRIPT; 
-    		} else if (hold.equals("VISUAL_BASIC")) {
+    		} else if (hold.equals("VISUAL BASIC")) {
     			fp.currentLanguage = FPModel.LANGUAGE.VISUAL_BASIC; 
     		} else {
     			fp.currentLanguage = FPModel.LANGUAGE.DEFAULT; 
@@ -296,6 +297,7 @@ import java.util.*;
     		compute_FP_button.addActionListener(fpItem);
 
     		// compute size
+    		System.out.println("New Computse Size in FPItemListener");
     		ComputeSize sizeItem = new ComputeSize(); 
     		sizeItem.setFields(fp,CodeSizeField,saveObject,saveObjectArray);
     		compute_code_size_button.addActionListener(sizeItem);

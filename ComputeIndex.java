@@ -68,7 +68,7 @@ public class ComputeIndex implements ActionListener {
 		number_of_rows_when_saving.num++;
 		smi = x;
 		list.add(smi);
-		System.out.println(list);
+		System.out.println("In ComputeIndex:\n"+ list);
 		System.out.println(number_of_rows_when_opening);
 		System.out.println(number_of_rows_when_saving);
 	}
