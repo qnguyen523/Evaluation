@@ -1,9 +1,13 @@
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 import javax.swing.filechooser.*;
+import javax.swing.table.DefaultTableModel;
+
 import java.util.*;
 /*
  * This class is to open file to load a new tab
@@ -15,13 +19,52 @@ public class OpenItemListener implements ActionListener{
 	JTabbedPane tabPane;
 	JFrame frame;
 	ArrayList<SaveModel> saveObjectArray;
-	
+	SavingList saving_list;
+	ArrayList<SMI> SMI_list;
+	DefaultTableModel model;
+	JTable table;
+	Button addRow;// = new Button("Add Row");
+    Button computeIndex;// = new Button("Compute Index");
+    AddRow ar;// = new AddRow();
+    ComputeIndex ci;// = new ComputeIndex();
+    SaveItemListener saveItem;// = new SaveItemListener();
+    NumberOfRows number_of_rows_when_opening;
+	NumberOfRows number_of_rows_when_saving;
+	ProjectInfoModel projectInfo;
+	SMI_Listener sl;// = new SMI_Listener();
+	// save
+	public void set_SMI_Listener(SMI_Listener sl) {
+		this.sl=sl;
+	}
+	// exit
+	public void SetNumberOfRows
+	(NumberOfRows number_of_rows_when_opening,NumberOfRows number_of_rows_when_saving) {
+		this.number_of_rows_when_opening=number_of_rows_when_opening;
+		this.number_of_rows_when_saving=number_of_rows_when_saving;
+	}
 	// set fields
-	public void setFields(ArrayList<SaveModel> saveObjectArray,JTabbedPane tabPane,JFrame frame) {
+	public void setFields(SavingList saving_list,JTabbedPane tabPane,JFrame frame,
+			DefaultTableModel model,Button addRow,Button computeIndex,AddRow ar,
+			ComputeIndex ci,SaveItemListener saveItem,JTable table,
+			ProjectInfoModel projectInfo) {
 //		this.saveObject=saveObject;
 		this.tabPane=tabPane;
 		this.frame=frame;
-		this.saveObjectArray=saveObjectArray;
+		this.saving_list=saving_list;
+		this.model=model;
+		this.addRow=addRow;
+		this.computeIndex=computeIndex;
+		this.ar=ar;
+		this.ci=ci;
+		this.saveItem=saveItem;
+		this.table=table;
+		this.projectInfo=projectInfo;
+	}
+	
+	// create a row
+	public void addRow(DefaultTableModel model,SMI x) {
+		model.addRow(new String[] {x.smi+"",x.added+"",x.changed+"",x.deleted+"",x.currentTotal+""});
+
 	}
 	// when open button is clicked
 	@SuppressWarnings("unchecked")
@@ -41,7 +84,10 @@ public class OpenItemListener implements ActionListener{
 			try {
 				FileInputStream fileIn = new FileInputStream(file);
 				ObjectInputStream in = new ObjectInputStream(fileIn);
-				saveObjectArray = (ArrayList<SaveModel>) in.readObject();
+				SavingList temp_saving_list = (SavingList) in.readObject();
+				saveItem.setSavingList(temp_saving_list);
+				
+				this.saving_list=temp_saving_list;
 				in.close();
 				fileIn.close();
 			} catch (IOException i) {
@@ -53,14 +99,143 @@ public class OpenItemListener implements ActionListener{
 				return;
 			}
 			
+			// take care of fp panels
+			saveObjectArray = new ArrayList<SaveModel>();
+			saveObjectArray = (ArrayList<SaveModel>) saving_list.saveObjectArray.clone();
+//			saving_list.saveObjectArray = new ArrayList<SaveModel>();
 			System.out.println(saveObjectArray);
-			
-			while(!saveObjectArray.isEmpty()) {
-				SaveModel saveObject = new SaveModel(); 
-				saveObject = saveObjectArray.remove(0);
-				functionPoint(saveObject);
+			if (saveObjectArray==null) {
+				System.out.println("Error with saveObjectArray");
+				return;
+			}
+			System.out.println(saveObjectArray);
+			for (SaveModel i : saving_list.saveObjectArray) {
+				functionPoint(i);
 			}
 			
+//			while(!saving_list.saveObjectArray.isEmpty()) {
+//				SaveModel saveObject = new SaveModel(); 
+//				saveObject = saving_list.saveObjectArray.remove(0);
+//				functionPoint(saveObject);
+//			}
+			
+			
+			// take care of table
+			SMI_list = saving_list.SMI_list;
+//			initialize for exit
+			number_of_rows_when_opening.num=number_of_rows_when_saving.num=SMI_list.size();
+					
+			System.out.println(SMI_list);
+			if (SMI_list==null || SMI_list.isEmpty()) {
+				System.out.println("Error with SMI_List");
+				return;
+			}
+			JPanel panel = new JPanel();
+			tabPane.addTab("SMI", panel);
+			frame.getContentPane().add(tabPane, BorderLayout.CENTER);
+			String[] header = {"SMI","SMI Added","SMI Changed","SMI Deleted","Total Modules"};
+			String[][] rec = {
+
+			};
+			panel.setBorder(BorderFactory.createTitledBorder( BorderFactory.createEtchedBorder(), "Software Maturity Index"));
+			model = new DefaultTableModel(rec,header) {
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					if (row==this.getRowCount()-1 && (column==1 || column==2 || column==3))
+						return true;
+					else return false;  
+				}
+			};
+			JTable table = new JTable(model);
+			// add to JTable
+			for (SMI x : SMI_list) {
+				addRow(model,x);
+			}
+			saveItem.setTable(table,model);
+			sl.setTable(table,model);
+			
+			JScrollPane sp = new JScrollPane(table);
+		    
+		    ar.setField(model,table);
+//		    addRow.addActionListener(ar);
+		    
+		    SMI lastSMI = new SMI();
+		    ci.setFields(table,lastSMI,SMI_list);
+		    int lastTotal = SMI_list.get(SMI_list.size()-1).currentTotal;
+		    SMI last_smi = new SMI();
+		    ci.setFields(table,last_smi,SMI_list);
+		    ci.setNumberOfRows(number_of_rows_when_opening,number_of_rows_when_saving);
+		    ci.setLastTotal(lastTotal);
+//		    computeIndex.addActionListener(ci);
+
+		    sp.setPreferredSize( new Dimension(700,400) );
+		    table.setGridColor(Color.RED);
+		    panel.add(sp);
+		    panel.add(addRow);
+		    panel.add(computeIndex);
+			
+		    // testing
+		    frame.addWindowListener(new WindowAdapter() {
+		    	@Override
+		    	public void windowClosing(WindowEvent e) {
+		    		System.out.println("In OpenItemListener:");
+		    		System.out.println(saveObjectArray);
+		    		System.out.println(SMI_list);
+		    		System.out.println(saving_list.saveObjectArray);
+		    		System.out.println(saving_list.SMI_list);
+		    		System.out.println(number_of_rows_when_opening+" "+number_of_rows_when_saving);
+		    		if (number_of_rows_when_opening.equals(number_of_rows_when_saving)){
+		    			System.out.println("Dispose and exit");
+		    			frame.dispose();
+		    			System.exit(1);
+		    		} else {
+		    			System.out.println("Not equal");
+		    			// not equal
+		    			// save
+		    			String[] options = { "Save", "Discard" };
+		    			String msg = "You must save before closing the application"
+		    					+ "\nDo you want to save the changes made to the SMI panel?";
+		    			int choice = JOptionPane.showOptionDialog(null, msg, "Warning",
+		    					JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+		    					null, options, options[1]);
+		    			if (choice==0) {
+		    				// save
+		    				String projectName = projectInfo.newProjectText.getText();
+		    				String fileName = projectName+".ms";
+		    				if (fileName.equals("Project Name cannot be empty.ms")
+		    						|| fileName.equals(".ms")) {
+		    					JOptionPane.showMessageDialog(frame, "Nothing to be saved. You must have a project name", "Alert", JOptionPane.ERROR_MESSAGE);
+		    					return;
+		    				}
+		    				// save
+		    				try {
+		    					FileOutputStream fileOut = new FileOutputStream(fileName);
+		    					ObjectOutputStream out = new ObjectOutputStream(fileOut);
+		    					out.writeObject(saving_list);
+		    					out.close();
+		    					fileOut.close();
+		    					//       				  JOptionPane.showMessageDialog(frame, "Saved!","Save", JOptionPane.INFORMATION_MESSAGE);
+		    					System.out.println("Serialized data is saved");
+		    					System.out.println(saving_list.saveObjectArray);
+		    					System.out.println(saving_list.SMI_list);
+		    					
+		    					// dispose and exit 
+		    					frame.dispose();
+		    					System.exit(1);
+		    				} catch (IOException i) {
+		    					i.printStackTrace();
+		    				}
+		    				
+		    				// dispose and exit
+//	                	 frame.dispose();
+//	                	 System.exit(1);
+		    			}
+		    			else {
+		    				// "Discard" or Close the dialog
+		    			}
+		    		}
+		    	}
+		    });
 		}
 		else {
 			return;

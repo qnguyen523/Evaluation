@@ -20,4 +20,7 @@ public class SaveModel implements Serializable {
 		id[4] = new infomationDomain(0);
 		for (int i : vaf_array) i=0;
 	}
+	public String toString() {
+		return CodeSizeField.getText();
+	}
 }

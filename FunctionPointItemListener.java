@@ -19,6 +19,11 @@ import java.util.*;
     	JTextField languageField = new JTextField(2);
     	SaveModel saveObject;
     	ArrayList<SaveModel> saveObjectArray;
+    	JPanel panel;// = new JPanel();
+    	// set panel
+    	public void setPanel(JPanel panel) {
+    		this.panel=panel;
+    	}
     	// set fields
     	public void setFields(LanguageItemListener lanItem, JFrame frame, FPModel fp,
     			JTextField languageField, JTabbedPane tabPane,ArrayList<SaveModel> saveObjectArray) {
@@ -32,6 +37,7 @@ import java.util.*;
     	}
     	// when Function Points button is clicked
     	public void actionPerformed(ActionEvent e) {
+    		panel = new JPanel();
     		saveObject = new SaveModel();
     		
     		languageField = new JTextField(2);
@@ -76,7 +82,7 @@ import java.util.*;
     			fp.currentLanguage = FPModel.LANGUAGE.DEFAULT; 
     		}
     		
-    		JPanel panel = new JPanel();
+    		
     		tabPane.addTab("Function Points", panel);
     		frame.getContentPane().add(tabPane, BorderLayout.CENTER);
     	    frame.setVisible(true);

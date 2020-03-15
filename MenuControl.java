@@ -1,7 +1,13 @@
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
-import javax.swing.*; 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel; 
 /*
  * This class is to create a menu bar and to control every operation
  */
@@ -17,6 +23,7 @@ public class MenuControl {
     
     private JFrame frame;
     private String text;
+    private JMenuItem smi_item;// = new JMenuItem("SMI"); 
     public FPModel fp;
     
     // back-end
@@ -26,10 +33,12 @@ public class MenuControl {
 //    SaveModel saveObject;
     ProjectInfoModel projectInfo;
     JTabbedPane tabPane;
-    ArrayList<SaveModel> saveObjectArray = new ArrayList<>();
+//    ArrayList<SaveModel> saveObjectArray = new ArrayList<>();
     
     // constructor
     public MenuControl(String projectName) { 
+    	JPanel panel = new JPanel();
+    	SavingList saving_list = new SavingList();
     	// initialization
     	file_option = new JMenuItem[4];
     	text = new String();
@@ -49,6 +58,10 @@ public class MenuControl {
     	metrics = new JMenu("Metrics");
     	help = new JMenu("Help");
     	
+    	// exit
+		NumberOfRows number_of_rows_when_opening=new NumberOfRows(0);
+		NumberOfRows number_of_rows_when_saving=new NumberOfRows(0);
+    	
     	// add to menuBar
     	menuBar.add(file);
     	menuBar.add(edit);
@@ -66,16 +79,6 @@ public class MenuControl {
     	NewItemListener newItem = new NewItemListener();
     	newItem.setFields(frame, projectInfo);
     	file_option[0].addActionListener(newItem);
-    	
-    	// add ActionListener to JMenu file_option[2]: Save operation
-    	SaveItemListener saveItem = new SaveItemListener();
-    	saveItem.setFields(saveObjectArray, projectInfo,frame);
-    	file_option[2].addActionListener(saveItem);
-    	
-    	// add ActionListener to JMenu file_option[1]: Open operation
-    	OpenItemListener openItem = new OpenItemListener();
-    	openItem.setFields(saveObjectArray,tabPane,frame);
-    	file_option[1].addActionListener(openItem);
     	
     	// add ActionListener to JMenu file_option[1]: Exit operation
     	ExitItemListener exitItem = new ExitItemListener();
@@ -102,19 +105,148 @@ public class MenuControl {
     	// create menu items for metrics
     	metrics_option1 = new JMenuItem("Function Points");
     	
-    	// add ActionListener for metrics_option1
-    	FunctionPointItemListener fpItem = new FunctionPointItemListener();
-    	fpItem.setFields(lanItem,frame,fp,languageField,tabPane,saveObjectArray);
-    	metrics_option1.addActionListener(fpItem);
+    	// smi
+    	// Array list for saving
+//    	ArrayList<SMI> SMI_list = new ArrayList<>();
+    	
+    	// add table
+    	String[] header = {"SMI","SMI Added","SMI Changed","SMI Deleted","Total Modules"};
+    	String[][] rec = {
 
+    	};
+    	DefaultTableModel model = new DefaultTableModel(rec,header) {
+    		@Override
+    		public boolean isCellEditable(int row, int column) {
+    			if (row==this.getRowCount()-1 && (column==1 || column==2 || column==3))
+    				return true;
+    			else return false;  
+    		}
+    	};
+    	JTable table = new JTable(model);
+    	JScrollPane sp = new JScrollPane(table);
+//	    save
+	    SMI last_smi = new SMI();
+    	// buttons
+	    Button addRow = new Button("Add Row");
+	    Button computeIndex = new Button("Compute Index");
+	    
+	    AddRow ar = new AddRow();
+	    ar.setField(model,table);
+	    addRow.addActionListener(ar);
+	    
+	    ComputeIndex ci = new ComputeIndex();
+	    ci.setFields(table,last_smi,saving_list.SMI_list);
+	    ci.setNumberOfRows(number_of_rows_when_opening,number_of_rows_when_saving);
+	    computeIndex.addActionListener(ci);
+	    
+		// add ActionListener for metrics_option1
+    	FunctionPointItemListener fpItem = new FunctionPointItemListener();
+    	fpItem.setFields(lanItem,frame,fp,languageField,tabPane,saving_list.saveObjectArray);
+//    	fpItem.setPanel(panel);
+    	metrics_option1.addActionListener(fpItem);
+	    
+    	// add ActionListener to JMenu file_option[2]: Save operation
+    	SaveItemListener saveItem = new SaveItemListener();
+    	saveItem.setFields(saving_list, projectInfo,frame,table);
+    	saveItem.setNumberOfRows(number_of_rows_when_opening,number_of_rows_when_saving);
+    	file_option[2].addActionListener(saveItem);
+    	
+    	// add ActionListener to JMenu file_option[1]: Open operation
+    	OpenItemListener openItem = new OpenItemListener();
+    	openItem.setFields(saving_list,tabPane,frame,model,addRow,
+    			computeIndex,ar,ci,saveItem,table,projectInfo);
+    	openItem.SetNumberOfRows(number_of_rows_when_opening,number_of_rows_when_saving);
+    	file_option[1].addActionListener(openItem);
+    	
+    	smi_item = new JMenuItem("SMI"); 
+    	// add ActionListener for smi
+    	SMI_Listener sl = new SMI_Listener();
+    	sl.setFields(frame,tabPane,saving_list.SMI_list,saveItem,model,table,panel,
+    			sp,addRow,computeIndex,projectInfo);
+    	smi_item.addActionListener(sl);
+    	openItem.set_SMI_Listener(sl);
+    	
+    	
     	// add to metrics
     	metrics.add(metrics_option1);
+    	metrics.add(smi_item);
     	
     	// finalize frame
     	frame.setLayout(new BorderLayout());
     	frame.setJMenuBar(menuBar);
     	frame.setSize(800, 600);
     	frame.setVisible(true);
-    	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    	// testing
+//    	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    	
+    	frame.addWindowListener(new WindowAdapter() {
+    		@Override
+    		public void windowClosing(WindowEvent e) {
+    			System.out.println("Closing in Main:");
+    			System.out.println(saving_list.SMI_list);
+    			System.out.println(saving_list.saveObjectArray);
+    			System.out.println(model.getRowCount());
+    			System.out.println(number_of_rows_when_opening+" "+number_of_rows_when_saving);
+    			// exit from MenuControl
+    			if (model.getRowCount()==0 && number_of_rows_when_opening.num==0
+    					&&number_of_rows_when_saving.num==0) {
+    				System.out.println("Displose and exit");
+    				frame.dispose();
+    				System.exit(1);
+    			}
+    			// exit from OpenItemListener
+    			if (model.getRowCount()==0) {
+    				System.err.println("Error with model");
+    				return;
+    			}
+    			// validate
+    			if (number_of_rows_when_opening.num==number_of_rows_when_saving.num) {
+    				System.out.println("Displose and exit");
+    				frame.dispose();
+    				System.exit(1);
+    			}
+
+    			String[] options = { "Save", "Discard" };
+    			String msg = "You must save before closing the application"
+    					+ "\nDo you want to save the changes made to the SMI panel?";
+    			int choice = JOptionPane.showOptionDialog(frame, msg, "Warning",
+    					JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+    					null, options, options[1]);
+
+    			if (choice==0) {
+    				String projectName = projectInfo.newProjectText.getText();
+    				String fileName = projectName+".ms";
+    				if (fileName.equals("Project Name cannot be empty.ms")
+    						|| fileName.equals(".ms")) {
+    					JOptionPane.showMessageDialog(frame, "Nothing to be saved. You must have a project name", "Alert", JOptionPane.ERROR_MESSAGE);
+    					return;
+    				}
+    				// save
+    				try {
+    					FileOutputStream fileOut = new FileOutputStream(fileName);
+    					ObjectOutputStream out = new ObjectOutputStream(fileOut);
+    					out.writeObject(saving_list);
+    					out.close();
+    					fileOut.close();
+    					//       				  JOptionPane.showMessageDialog(frame, "Saved!","Save", JOptionPane.INFORMATION_MESSAGE);
+    					System.out.println("Serialized data is saved");
+    					System.out.println(saving_list.saveObjectArray);
+    					System.out.println(saving_list.SMI_list);
+
+    					// close the frame 
+    					frame.dispose();
+    					System.exit(1);
+    				} catch (IOException i) {
+    					i.printStackTrace();
+    				}
+    			}
+    			else {
+    				// "Discard" or Close the dialog
+    			}
+
+    		}
+    	});
     }
 }
