@@ -26,6 +26,7 @@ public class ComputeSize implements ActionListener {
 			// saving
 			if (!saveObjectArray.isEmpty() && currentCodeSize!=-1) {
 				saveObjectArray.remove(saveObjectArray.size()-1);
+				System.err.println("Remove from ComputeSize");
 			}
 			currentCodeSize=fp.computeCodeSize();
 			DecimalFormat format = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);

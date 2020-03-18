@@ -11,6 +11,20 @@ public class infomationDomain implements Serializable {
 	public JRadioButton[] radioButtons;
 	public ButtonGroup group;
 	public int complexity_value = 0;
+	@Override
+    public boolean equals(Object o) {
+		if (o == this) { 
+            return true; 
+        }
+		if (!(o instanceof SMI)) { 
+            return false; 
+        } 
+		infomationDomain c = (infomationDomain) o;
+		int i=Integer.parseInt(c.output.getText());
+		int j=Integer.parseInt(this.output.getText());
+		
+		return i==j;
+	}
 	public infomationDomain(int average) {
 		radioButtons = new JRadioButton[3];
 		complexity_value = average;

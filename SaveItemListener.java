@@ -74,13 +74,13 @@ public class SaveItemListener implements ActionListener{
 		try {
 			FileOutputStream fileOut = new FileOutputStream(fileName);
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			System.out.println(saving_list.saveObjectArray);
+			System.out.println(saving_list.SMI_list);
 			out.writeObject(saving_list);
 			out.close();
 			fileOut.close();
 			JOptionPane.showMessageDialog(frame, "Saved!","Save", JOptionPane.INFORMATION_MESSAGE);
 			System.out.println("Serialized data is saved");
-			System.out.println(saving_list.saveObjectArray);
-			System.out.println(saving_list.SMI_list);
 		} catch (IOException i) {
 			i.printStackTrace();
 		}

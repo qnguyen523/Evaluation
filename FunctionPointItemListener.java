@@ -29,7 +29,7 @@ import java.util.*;
     			JTextField languageField, JTabbedPane tabPane,ArrayList<SaveModel> saveObjectArray) {
     		this.lanItem=lanItem;
     		this.frame=frame;
-    		this.fp=fp;
+//    		this.fp=fp;
 //    		this.saveObject.id=this.id;
 //    		this.saveObject=saveObject;
     		this.tabPane=tabPane;
@@ -37,6 +37,7 @@ import java.util.*;
     	}
     	// when Function Points button is clicked
     	public void actionPerformed(ActionEvent e) {
+    		fp = new FPModel();
     		panel = new JPanel();
     		saveObject = new SaveModel();
     		
@@ -82,7 +83,6 @@ import java.util.*;
     		} else {
     			fp.currentLanguage = FPModel.LANGUAGE.DEFAULT; 
     		}
-    		
     		
     		tabPane.addTab("Function Points", panel);
     		frame.getContentPane().add(tabPane, BorderLayout.CENTER);
@@ -310,5 +310,6 @@ import java.util.*;
     		saveObject.VAFField = VAFField;
     		saveObject.CodeSizeField = CodeSizeField;
     		saveObject.vaf_array=vaf_array;
+    		saveObject.fp=fp;
     	}
     }

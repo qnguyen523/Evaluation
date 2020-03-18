@@ -255,14 +255,14 @@ public class MenuControl {
     				// save
     				try {
     					FileOutputStream fileOut = new FileOutputStream(fileName);
+    					System.out.println(saving_list.saveObjectArray);
+    					System.out.println(saving_list.SMI_list);
     					ObjectOutputStream out = new ObjectOutputStream(fileOut);
     					out.writeObject(saving_list);
     					out.close();
     					fileOut.close();
     					//       				  JOptionPane.showMessageDialog(frame, "Saved!","Save", JOptionPane.INFORMATION_MESSAGE);
     					System.out.println("Serialized data is saved");
-    					System.out.println(saving_list.saveObjectArray);
-    					System.out.println(saving_list.SMI_list);
 
     					// close the frame 
     					frame.dispose();

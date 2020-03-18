@@ -12,6 +12,31 @@ public class SaveModel implements Serializable {
 	JTextField FPField = new JTextField("0",2);
 	JTextField CodeSizeField = new JTextField("0",2);
 	int[] vaf_array = new int[14];
+	FPModel fp = new FPModel();
+	@Override
+    public boolean equals(Object o) {
+		if (o == this) { 
+            return true; 
+        }
+		if (!(o instanceof SMI)) { 
+            return false; 
+        } 
+		// compare
+		SaveModel c = (SaveModel) o;
+		for (int i=0; i<5; i++) {
+			if (!id[i].equals(c.id[i])) return false;
+		}
+		if (
+				!languageField.getText().equals(c.languageField.getText())
+				|| !total.getText().equals(c.total.getText())
+				|| !VAFField.getText().equals(c.VAFField.getText())
+				|| !CodeSizeField.getText().equals(c.CodeSizeField.getText())
+				)
+			return false;
+
+		// all of fields are equal
+		return true;	
+	}
 	public SaveModel() {
 		id[0] = new infomationDomain(0);
 		id[1] = new infomationDomain(0);
@@ -21,6 +46,8 @@ public class SaveModel implements Serializable {
 		for (int i : vaf_array) i=0;
 	}
 	public String toString() {
-		return CodeSizeField.getText();
+		String s = languageField.getText()+" "+total.getText()+" "+VAFField.getText()
+		+" "+FPField.getText()+" "+CodeSizeField.getText();
+		return s;
 	}
 }

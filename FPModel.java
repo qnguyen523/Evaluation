@@ -1,8 +1,11 @@
+import java.io.Serializable;
+
 import javax.swing.*;
 /*
  * This class allows users to compute fp and code size
  */
-public class FPModel {
+@SuppressWarnings("serial")
+public class FPModel implements Serializable {
 	public enum LANGUAGE 
 	{ 
 	    ASSEMBLER,ADA_95,CL,CLPLUS,CSHARP,COBOL,FORTRAN,
@@ -13,6 +16,7 @@ public class FPModel {
 	public int EICount,EOCount,EInqCount,ILFCount,EIFCount;
 	public int totalCount;
 	double fp=0.0;
+	int vaf=0;
 	// constructor
 	public FPModel() {
 		EICount=EOCount=EInqCount=ILFCount=EIFCount=totalCount=0;
@@ -24,6 +28,7 @@ public class FPModel {
 	// compute fp
 	public double computeFP(int vaf_total_value) {
 		// fp = total_count * [0.65 + 0.01 sum(f_i)]
+		vaf = vaf_total_value;
 		totalCount = computeTotal();
 		fp = totalCount * (0.65 + 0.01 * vaf_total_value);
 		return fp;

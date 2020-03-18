@@ -34,6 +34,7 @@ public class OpenItemListener implements ActionListener{
 	SMI_Listener sl;// = new SMI_Listener();
 	IsOpen open;
 	FunctionPointItemListener fpItem;
+	ComputeSizeFromSave sizeItem;
 	// save
 	public void set_SMI_Listener(SMI_Listener sl) {
 		this.sl=sl;
@@ -73,7 +74,7 @@ public class OpenItemListener implements ActionListener{
 	// when open button is clicked
 	@SuppressWarnings("unchecked")
 	public void actionPerformed(ActionEvent e) {
-		open.isOpen=true;
+		
 		// for testing purpose
 		File f = new File("/Users/Peter/Documents/workspace2/Metrics-Suite/");
 //		File f = new File("/");
@@ -106,8 +107,10 @@ public class OpenItemListener implements ActionListener{
 				
 				fpItem.saveObjectArray=temp_saving_list.saveObjectArray;
 				this.saving_list.saveObjectArray = fpItem.saveObjectArray;
+				
 				in.close();
 				fileIn.close();
+				open.isOpen=true;
 			} catch (IOException i) {
 				i.printStackTrace();
 				return;
@@ -424,10 +427,10 @@ public class OpenItemListener implements ActionListener{
 		panel.add(saveObject.total);
 		
 		// compute fp
-		FPModel fp = new FPModel();
+//		FPModel fp = new FPModel();
 		ComputeFP fpItem = new ComputeFP(); 
 		VafValue vaf_total_value = new VafValue();
-		fpItem.setFields(fp,saveObject.id,saveObject.total,saveObject.VAFField,
+		fpItem.setFields(saveObject.fp,saveObject.id,saveObject.total,saveObject.VAFField,
 				vaf_total_value,saveObject.FPField);
 		compute_FP_button.addActionListener(fpItem);
 		
@@ -438,12 +441,20 @@ public class OpenItemListener implements ActionListener{
 		
 		// change language
 		ChangeLanguageItemListener changeLanItem = new ChangeLanguageItemListener();
-		changeLanItem.setFields(fp,saveObject.languageField);
+		changeLanItem.setFields(saveObject.fp,saveObject.languageField);
 		change_language_button.addActionListener(changeLanItem);
 		
 		// compute size
-		ComputeSizeFromSave sizeItem = new ComputeSizeFromSave(); 
-		sizeItem.setFields(fp,saveObject.CodeSizeField,saveObject.languageField);
+		sizeItem = new ComputeSizeFromSave(); 
+		// 
+//		fp.totalCount=Integer.parseInt(saveObject.total.getText());
+//		fp.vaf = Integer.parseInt(saveObject.VAFField.getText());
+//		fp.fp = Double.parseDouble(saveObject.FPField.getText());
+//		System.out.println(saveObject.CodeSizeField.getText());
+		int currentCodeSize=Integer.parseInt(saveObject.CodeSizeField.getText().replace(",",""));
+		sizeItem.setFields(saveObject,currentCodeSize);
+		sizeItem.setTabPane(tabPane);
+		
 		compute_code_size_button.addActionListener(sizeItem);
 	}
 }
