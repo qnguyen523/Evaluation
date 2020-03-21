@@ -25,6 +25,30 @@ public class ComputeFP implements ActionListener {
 	}
 	// when a Compute FP button is clicked
 	public void actionPerformed(ActionEvent e) {
+		// validate
+		if (	id[EI].input.getText().equals("") 
+			||	id[EO].input.getText().equals("")
+			||	id[EInq].input.getText().equals("")
+			||	id[ILF].input.getText().equals("")
+			||	id[EIF].input.getText().equals("")) {
+			System.err.println("Error from ComputeFP. Users do not input fields");
+			JOptionPane.showMessageDialog(null, "Please input all fields before computing FP", 
+					"Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		// validate
+		if (	!id[EI].input.getText().matches("[0-9]+") 
+				||	!id[EO].input.getText().matches("[0-9]+")
+				||	!id[EInq].input.getText().matches("[0-9]+")
+				||	!id[ILF].input.getText().matches("[0-9]+")
+				||	!id[EIF].input.getText().matches("[0-9]+")) {
+			System.err.println("Error from ComputeFP. Users do not input numbers in the fields");
+			JOptionPane.showMessageDialog(null, "Please input non-negative numbers in the fields", 
+					"Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
 		// take care of information domain values
 		fp.EICount = id[EI].input.getText().equals("") ? 0 : 
 			Integer.valueOf(id[EI].input.getText()) * id[EI].complexity_value;

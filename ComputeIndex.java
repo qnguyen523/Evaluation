@@ -49,14 +49,31 @@ public class ComputeIndex implements ActionListener {
 			JOptionPane.showMessageDialog(null, "You already computed", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+
+		// validate
+		if (	!((String) table.getValueAt(numOfRows-1, 1)).matches("[0-9]+") 
+			|| 	!((String) table.getValueAt(numOfRows-1, 2)).matches("[0-9]+") 
+			||	!((String) table.getValueAt(numOfRows-1, 3)).matches("[0-9]+")	) {
+			System.out.println("");
+			System.out.println("");
+			System.out.println("");
+			System.err.println("Error from ComputeIndex. "
+					+ "Users do not input non-negative numbers in the fields");
+			JOptionPane.showMessageDialog(null, "Please input non-negative numbers in the fields", 
+					"Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		
 		x.added=Integer.parseInt((String) table.getValueAt(numOfRows-1, 1));
 		x.changed=Integer.parseInt((String) table.getValueAt(numOfRows-1, 2));
 		x.deleted=Integer.parseInt((String) table.getValueAt(numOfRows-1, 3));
 		
+		// validate
 		if (x.added<0 || x.changed<0 || x.deleted<0) {
-			System.err.println("Error");
-			JOptionPane.showMessageDialog(null, "You must enter non-negative fields", "Error", JOptionPane.ERROR_MESSAGE);
+			System.err.println("Error from ComputeIndex. "
+					+ "You must enter non-negative number in the fields");
+			JOptionPane.showMessageDialog(null, "You must enter non-negative number in the fields", 
+					"Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 

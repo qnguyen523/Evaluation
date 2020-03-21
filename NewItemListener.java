@@ -69,6 +69,8 @@ public class NewItemListener implements ActionListener {
     					frame.setTitle(title);
     					frame.setVisible(true);
     				}
+    				// close
+    				newProjectFrame.dispose();
     			}
     		});
 

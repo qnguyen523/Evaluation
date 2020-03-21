@@ -86,6 +86,17 @@ public class OpenItemListener implements ActionListener{
 		
 		if(inputFile.showOpenDialog(null)==JFileChooser.APPROVE_OPTION)
 		{
+			// validate
+			System.out.println(saving_list.SMI_list.size());
+			if (!saving_list.SMI_list.isEmpty()) {
+				System.err.println("You already opened a project. You cannot open two projects "
+						+ "at the same time.");
+				JOptionPane.showMessageDialog(null, "You already opened a project. "
+						+ "You cannot open two projects "
+						+ "at the same time.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
 			File file = inputFile.getSelectedFile();
 			try {
 				
@@ -123,30 +134,23 @@ public class OpenItemListener implements ActionListener{
 			// take care of fp panels
 			saveObjectArray = new ArrayList<SaveModel>();
 			saveObjectArray = (ArrayList<SaveModel>) saving_list.saveObjectArray.clone();
-//			saving_list.saveObjectArray = new ArrayList<SaveModel>();
-//			System.out.println(saveObjectArray);
+			
+			
+			System.out.println("In OpenItem "+ saveObjectArray);
+			System.out.println(this.saving_list.saveObjectArray);
+			
 			if (saveObjectArray==null) {
 				System.out.println("Error with saveObjectArray");
 				return;
 			}
-//			System.out.println(saveObjectArray);
 			for (SaveModel i : saving_list.saveObjectArray) {
 				functionPoint(i);
 			}
-			
-//			while(!saving_list.saveObjectArray.isEmpty()) {
-//				SaveModel saveObject = new SaveModel(); 
-//				saveObject = saving_list.saveObjectArray.remove(0);
-//				functionPoint(saveObject);
-//			}
-			
-			
 			// take care of table
 			SMI_list = saving_list.SMI_list;
 //			initialize for exit
 			number_of_rows_when_opening.num=number_of_rows_when_saving.num=SMI_list.size();
 					
-//			System.out.println(SMI_list);
 			if (SMI_list==null || SMI_list.isEmpty()) {
 				System.out.println("Error with SMI_List");
 				return;
@@ -178,7 +182,6 @@ public class OpenItemListener implements ActionListener{
 			JScrollPane sp = new JScrollPane(table);
 		    
 		    ar.setField(model,table);
-//		    addRow.addActionListener(ar);
 		    
 		    SMI lastSMI = new SMI();
 		    ci.setFields(table,lastSMI,SMI_list);
@@ -187,88 +190,16 @@ public class OpenItemListener implements ActionListener{
 		    ci.setFields(table,last_smi,SMI_list);
 		    ci.setNumberOfRows(number_of_rows_when_opening,number_of_rows_when_saving);
 		    ci.setLastTotal(lastTotal);
-//		    computeIndex.addActionListener(ci);
 
 		    sp.setPreferredSize( new Dimension(700,400) );
 		    table.setGridColor(Color.RED);
 		    panel.add(sp);
 		    panel.add(addRow);
 		    panel.add(computeIndex);
-			
-		    // testing
-//		    return;
-//		    WindowListener[] a = frame.getWindowListeners();
-//			WindowListener w = a[0];
-//			w.windowClosing(new WindowEvent(frame,WindowEvent.WINDOW_CLOSING));
 		}
 		else {
 			return;
 		}
-		 // testing: backup addWindowListener()
-		/*
-	    frame.addWindowListener(new WindowAdapter() {
-	    	@Override
-	    	public void windowClosing(WindowEvent e) {
-	    		System.out.println("In OpenItemListener:");
-//	    		System.out.println(saveObjectArray);
-//	    		System.out.println(SMI_list);
-	    		System.out.println(saving_list.saveObjectArray);
-	    		System.out.println(saving_list.SMI_list);
-	    		System.out.println(number_of_rows_when_opening+" "+number_of_rows_when_saving);
-	    		if (number_of_rows_when_opening.equals(number_of_rows_when_saving)){
-	    			System.out.println("Dispose and exit");
-	    			frame.dispose();
-	    			System.exit(1);
-	    		} else {
-	    			System.out.println("Not equal");
-	    			// not equal
-	    			// save
-	    			String[] options = { "Save", "Discard" };
-	    			String msg = "You must save before closing the application"
-	    					+ "\nDo you want to save the changes made to the SMI panel?";
-	    			int choice = JOptionPane.showOptionDialog(null, msg, "Warning",
-	    					JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-	    					null, options, options[1]);
-	    			if (choice==0) {
-	    				// save
-	    				String projectName = projectInfo.newProjectText.getText();
-	    				String fileName = projectName+".ms";
-	    				if (fileName.equals("Project Name cannot be empty.ms")
-	    						|| fileName.equals(".ms")) {
-	    					System.err.println("Error in OpenItemListener. Frame.addActionLister()");
-	    					JOptionPane.showMessageDialog(frame, "Nothing to be saved. You must have a project name", "Alert", JOptionPane.ERROR_MESSAGE);
-	    					return;
-	    				}
-	    				// save
-	    				try {
-	    					FileOutputStream fileOut = new FileOutputStream(fileName);
-	    					ObjectOutputStream out = new ObjectOutputStream(fileOut);
-	    					out.writeObject(saving_list);
-	    					out.close();
-	    					fileOut.close();
-	    					//       				  JOptionPane.showMessageDialog(frame, "Saved!","Save", JOptionPane.INFORMATION_MESSAGE);
-	    					System.out.println("Serialized data is saved");
-	    					System.out.println(saving_list.saveObjectArray);
-	    					System.out.println(saving_list.SMI_list);
-	    					
-	    					// dispose and exit 
-	    					frame.dispose();
-	    					System.exit(1);
-	    				} catch (IOException i) {
-	    					i.printStackTrace();
-	    				}
-	    				
-	    				// dispose and exit
-//                	 frame.dispose();
-//                	 System.exit(1);
-	    			}
-	    			else {
-	    				// "Discard" or Close the dialog
-	    			}
-	    		}
-	    	}
-	    });
-	    */
 	}
 	// take care of function point
 	public void functionPoint(SaveModel saveObject) {
@@ -427,7 +358,6 @@ public class OpenItemListener implements ActionListener{
 		panel.add(saveObject.total);
 		
 		// compute fp
-//		FPModel fp = new FPModel();
 		ComputeFP fpItem = new ComputeFP(); 
 		VafValue vaf_total_value = new VafValue();
 		fpItem.setFields(saveObject.fp,saveObject.id,saveObject.total,saveObject.VAFField,
@@ -446,11 +376,6 @@ public class OpenItemListener implements ActionListener{
 		
 		// compute size
 		sizeItem = new ComputeSizeFromSave(); 
-		// 
-//		fp.totalCount=Integer.parseInt(saveObject.total.getText());
-//		fp.vaf = Integer.parseInt(saveObject.VAFField.getText());
-//		fp.fp = Double.parseDouble(saveObject.FPField.getText());
-//		System.out.println(saveObject.CodeSizeField.getText());
 		int currentCodeSize=Integer.parseInt(saveObject.CodeSizeField.getText().replace(",",""));
 		sizeItem.setFields(saveObject,currentCodeSize);
 		sizeItem.setTabPane(tabPane);

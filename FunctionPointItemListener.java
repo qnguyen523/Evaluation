@@ -10,8 +10,8 @@ import java.util.*;
     	final int EI = 0, EO = 1, EInq = 2, ILF = 3, EIF = 4;
 
     	JTabbedPane tabPane;
-    	JTextField VAFField = new JTextField(2);
-    	VafValue vaf_total_value = new VafValue();
+    	JTextField VAFField;// = new JTextField(2);
+    	VafValue vaf_total_value;// = new VafValue();
     	LanguageItemListener lanItem;
     	JFrame frame;
     	FPModel fp;
@@ -20,13 +20,15 @@ import java.util.*;
     	SaveModel saveObject;
     	ArrayList<SaveModel> saveObjectArray;
     	JPanel panel;// = new JPanel();
+    	SMI_Listener sl;
     	// set panel
     	public void setPanel(JPanel panel) {
     		this.panel=panel;
     	}
     	// set fields
     	public void setFields(LanguageItemListener lanItem, JFrame frame, FPModel fp,
-    			JTextField languageField, JTabbedPane tabPane,ArrayList<SaveModel> saveObjectArray) {
+    			JTextField languageField, JTabbedPane tabPane,
+    			ArrayList<SaveModel> saveObjectArray,SMI_Listener sl) {
     		this.lanItem=lanItem;
     		this.frame=frame;
 //    		this.fp=fp;
@@ -34,9 +36,31 @@ import java.util.*;
 //    		this.saveObject=saveObject;
     		this.tabPane=tabPane;
     		this.saveObjectArray=saveObjectArray;
+    		this.sl=sl;
     	}
     	// when Function Points button is clicked
     	public void actionPerformed(ActionEvent e) {
+    		// validate before opening new fp tab
+    		System.out.println(saveObject);
+    		System.out.println(saveObjectArray);
+    		if (saveObject!=null && saveObject.CodeSizeField.getText().equals("")) {
+    			JOptionPane.showMessageDialog(null, "Fields cannot be empty before "
+						+ "opening a new FP tab. "
+						+ "Please compute before proceeding", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+    		}
+    		
+//    		if (saveObjectArray!=null && !saveObjectArray.isEmpty()) {
+//    			int lastIndex = saveObjectArray.size()-1;
+//    			if (saveObjectArray.get(lastIndex).CodeSizeField.getText().equals("")) {
+//    				JOptionPane.showMessageDialog(null, "Fields cannot be empty before "
+//    						+ "opening a new FP tab", "Error", JOptionPane.ERROR_MESSAGE);
+//    				return;
+//    			}
+//    		}
+    		
+    		
+    		vaf_total_value=new VafValue();
     		fp = new FPModel();
     		panel = new JPanel();
     		saveObject = new SaveModel();
@@ -46,11 +70,11 @@ import java.util.*;
 //    		System.out.println(hold);
     		
     		// testing
-//    		if (hold.equals("")) {
-//    			JOptionPane.showMessageDialog(null, "Please choose a language", "Alert", JOptionPane.ERROR_MESSAGE);
-//    			System.err.println("Error");
-//    			return;
-//    		}
+    		if (hold.equals("")) {
+    			JOptionPane.showMessageDialog(null, "Please choose a language", "Alert", JOptionPane.ERROR_MESSAGE);
+    			System.err.println("Error");
+    			return;
+    		}
     		
     		// do not update language when change language button is clicked
     		languageField.setText(hold); 
@@ -187,7 +211,7 @@ import java.util.*;
     		FPField.setEditable(false);
     		// reset vaf value to 0 when opening new tab
     		VAFField = new JTextField("0", 2);
-    		vaf_total_value.value = 0;
+    		//vaf_total_value.value = 0; // not necessary
 
     		VAFField.setEditable(false);
     		JTextField CodeSizeField = new JTextField(2);
@@ -311,5 +335,8 @@ import java.util.*;
     		saveObject.CodeSizeField = CodeSizeField;
     		saveObject.vaf_array=vaf_array;
     		saveObject.fp=fp;
+    		
+    		// validate before opening smi tab
+    		sl.setSaveObject(saveObject);
     	}
     }

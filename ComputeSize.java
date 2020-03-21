@@ -22,6 +22,7 @@ public class ComputeSize implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// compute code size
 		System.out.println(currentCodeSize+" in ComputeSize");
+		// validate
 		if (currentCodeSize!=fp.computeCodeSize()) {
 			// saving
 			if (!saveObjectArray.isEmpty() && currentCodeSize!=-1) {

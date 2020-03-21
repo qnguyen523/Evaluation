@@ -17,7 +17,7 @@ public class ComputeSizeFromSave implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// compute code size
 		System.out.println(currentCodeSize+ " from ComputeSizeFromSave");
-		
+		// validate
 		if (currentCodeSize!=saveObject.fp.computeCodeSizeFromSave(saveObject.languageField)) {
 			currentCodeSize=saveObject.fp.computeCodeSizeFromSave(saveObject.languageField);
 			DecimalFormat format = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);

@@ -30,7 +30,6 @@ public class MenuControl {
     public JTextField languageField;
 
     // save and open operation
-//    SaveModel saveObject;
     ProjectInfoModel projectInfo;
     JTabbedPane tabPane;
     SavingList saving_list;
@@ -43,7 +42,6 @@ public class MenuControl {
 	Button addRow;
 	Button computeIndex;
 	ComputeIndex ci;
-	
 	FunctionPointItemListener fpItem;
 	SMI_Listener sl;
 	// exit
@@ -59,8 +57,6 @@ public class MenuControl {
     	text = new String();
     	fp = new FPModel();
     	languageField = new JTextField(2);
-    	
-//    	saveObject = new SaveModel();
     	projectInfo = new ProjectInfoModel();
     	tabPane = new JTabbedPane();
     	
@@ -72,8 +68,6 @@ public class MenuControl {
     	preferences = new JMenu("Preferences");
     	metrics = new JMenu("Metrics");
     	help = new JMenu("Help");
-    	
-    	
     	
     	// add to menuBar
     	menuBar.add(file);
@@ -118,10 +112,6 @@ public class MenuControl {
     	// create menu items for metrics
     	metrics_option1 = new JMenuItem("Function Points");
     	
-    	// smi
-    	// Array list for saving
-//    	ArrayList<SMI> SMI_list = new ArrayList<>();
-    	
     	// add table
     	String[] header = {"SMI","SMI Added","SMI Changed","SMI Deleted","Total Modules"};
     	String[][] rec = {
@@ -154,8 +144,8 @@ public class MenuControl {
 	    
 		// add ActionListener for metrics_option1
     	fpItem = new FunctionPointItemListener();
-    	fpItem.setFields(lanItem,frame,fp,languageField,tabPane,saving_list.saveObjectArray);
-//    	fpItem.setPanel(panel);
+    	sl = new SMI_Listener();
+    	fpItem.setFields(lanItem,frame,fp,languageField,tabPane,saving_list.saveObjectArray,sl);
     	metrics_option1.addActionListener(fpItem);
 	    
     	// add ActionListener to JMenu file_option[2]: Save operation
@@ -165,7 +155,6 @@ public class MenuControl {
     	file_option[2].addActionListener(saveItem);
 
     	// add ActionListener to JMenu file_option[1]: Open operation
-    	
     	openItem = new OpenItemListener();
     	openItem.setFields(saving_list,tabPane,frame,model,addRow,
     			computeIndex,ar,ci,saveItem,table,projectInfo,open,fpItem);
@@ -174,8 +163,8 @@ public class MenuControl {
 
     	smi_item = new JMenuItem("SMI"); 
     	// add ActionListener for smi
-    	sl = new SMI_Listener();
-    	sl.setFields(frame,tabPane,saving_list.SMI_list,saveItem,model,table,panel,
+    	
+    	sl.setFields(frame,tabPane,saving_list,saveItem,model,table,panel,
     			sp,addRow,computeIndex,projectInfo);
     	smi_item.addActionListener(sl);
     	openItem.set_SMI_Listener(sl);
@@ -195,11 +184,11 @@ public class MenuControl {
 //    	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     	
-    	
     	frame.addWindowListener(new WindowAdapter() {
     		@Override
     		public void windowClosing(WindowEvent e) {
     			ArrayList<SMI> SMI_list = openItem.SMI_list;
+    			// this is a clone of saveObjectArray right after reading from the file
     			ArrayList<SaveModel> saveObjectArray = openItem.saveObjectArray;
     			System.out.println(SMI_list);
     			System.out.println(saveObjectArray);
