@@ -13,6 +13,7 @@ public class SaveModel implements Serializable {
 	JTextField CodeSizeField = new JTextField("0",2);
 	int[] vaf_array = new int[14];
 	FPModel fp = new FPModel();
+	String tabTitle = "";
 	@Override
     public boolean equals(Object o) {
 		if (o == this) { 

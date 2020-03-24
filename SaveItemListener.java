@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 /*
@@ -19,13 +20,15 @@ public class SaveItemListener implements ActionListener{
 	DefaultTableModel model;
 	NumberOfRows number_of_rows_when_opening;
 	NumberOfRows number_of_rows_when_saving;
+	JTabbedPane tabPane;
 	public void setFields(SavingList saving_list,ProjectInfoModel projectInfo, 
-			JFrame frame,JTable table) {
+			JFrame frame,JTable table,JTabbedPane tabPane) {
 //		this.saveObject=saveObject;
 		this.projectInfo=projectInfo;
 		this.frame=frame;
 		this.saving_list=saving_list;
 		this.table=table;
+		this.tabPane=tabPane;
 	}
 	// exit
 	public void setNumberOfRows
@@ -85,9 +88,18 @@ public class SaveItemListener implements ActionListener{
 		try {
 			FileOutputStream fileOut = new FileOutputStream(fileName);
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			
+			// save active panel's index
+			int index = tabPane.getSelectedIndex();
+			String title = tabPane.getTitleAt(index);
+			saving_list.activeTabTitle = title;
+			
 			System.out.println(saving_list.saveObjectArray);
 			System.out.println(saving_list.SMI_list);
+			System.out.println("In SaveItemListener: saving_list.activeTabTitle: "+saving_list.activeTabTitle);
+			
 			out.writeObject(saving_list);
+			
 			out.close();
 			fileOut.close();
 			JOptionPane.showMessageDialog(frame, "Saved!","Save", JOptionPane.INFORMATION_MESSAGE);

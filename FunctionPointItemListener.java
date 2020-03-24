@@ -21,6 +21,9 @@ import java.util.*;
     	ArrayList<SaveModel> saveObjectArray;
     	JPanel panel;// = new JPanel();
     	SMI_Listener sl;
+    	
+    	int tab_index=1;
+    	String tabTitle = "";
     	// set panel
     	public void setPanel(JPanel panel) {
     		this.panel=panel;
@@ -41,24 +44,12 @@ import java.util.*;
     	// when Function Points button is clicked
     	public void actionPerformed(ActionEvent e) {
     		// validate before opening new fp tab
-//    		System.out.println(saveObject);
-//    		System.out.println(saveObjectArray);
     		if (saveObject!=null && saveObject.CodeSizeField.getText().equals("")) {
     			JOptionPane.showMessageDialog(null, "Fields cannot be empty before "
 						+ "opening a new FP tab. "
 						+ "Please compute before proceeding", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
     		}
-    		
-//    		if (saveObjectArray!=null && !saveObjectArray.isEmpty()) {
-//    			int lastIndex = saveObjectArray.size()-1;
-//    			if (saveObjectArray.get(lastIndex).CodeSizeField.getText().equals("")) {
-//    				JOptionPane.showMessageDialog(null, "Fields cannot be empty before "
-//    						+ "opening a new FP tab", "Error", JOptionPane.ERROR_MESSAGE);
-//    				return;
-//    			}
-//    		}
-    		
     		
     		vaf_total_value=new VafValue();
     		fp = new FPModel();
@@ -108,7 +99,12 @@ import java.util.*;
     			fp.currentLanguage = FPModel.LANGUAGE.DEFAULT; 
     		}
     		
-    		tabPane.addTab("Function Points", panel);
+    		tabTitle = "Function Points "+tab_index;
+    		tabPane.addTab(tabTitle, panel);
+    		tab_index++;
+    		
+    		System.out.println("Panel name:" + panel.getName());
+    		
     		frame.getContentPane().add(tabPane, BorderLayout.CENTER);
     	    frame.setVisible(true);
     	    panel.setLayout(null);
@@ -335,6 +331,7 @@ import java.util.*;
     		saveObject.CodeSizeField = CodeSizeField;
     		saveObject.vaf_array=vaf_array;
     		saveObject.fp=fp;
+    		saveObject.tabTitle=tabTitle;
     		
     		// validate before opening smi tab
     		sl.setSaveObject(saveObject);

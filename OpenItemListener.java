@@ -35,6 +35,8 @@ public class OpenItemListener implements ActionListener{
 	IsOpen open;
 	FunctionPointItemListener fpItem;
 	ComputeSizeFromSave sizeItem;
+	JMenu metrics;
+	LanguageItemListener lanItem;
 	// save
 	public void set_SMI_Listener(SMI_Listener sl) {
 		this.sl=sl;
@@ -49,7 +51,8 @@ public class OpenItemListener implements ActionListener{
 	public void setFields(SavingList saving_list,JTabbedPane tabPane,JFrame frame,
 			DefaultTableModel model,Button addRow,Button computeIndex,AddRow ar,
 			ComputeIndex ci,SaveItemListener saveItem,JTable table,
-			ProjectInfoModel projectInfo,IsOpen open,FunctionPointItemListener fpItem) {
+			ProjectInfoModel projectInfo,IsOpen open,FunctionPointItemListener fpItem,
+			JMenu metrics,LanguageItemListener lanItem) {
 //		this.saveObject=saveObject;
 		this.tabPane=tabPane;
 		this.frame=frame;
@@ -64,6 +67,8 @@ public class OpenItemListener implements ActionListener{
 		this.projectInfo=projectInfo;
 		this.open=open;
 		this.fpItem=fpItem;
+		this.metrics=metrics;
+		this.lanItem=lanItem;
 	}
 	
 	// create a row
@@ -87,7 +92,7 @@ public class OpenItemListener implements ActionListener{
 		if(inputFile.showOpenDialog(null)==JFileChooser.APPROVE_OPTION)
 		{
 			// validate
-			System.out.println(saving_list.SMI_list.size());
+//			System.out.println(saving_list.SMI_list.size());
 			if (!saving_list.SMI_list.isEmpty()) {
 				System.err.println("You already opened a project. You cannot open two projects "
 						+ "at the same time.");
@@ -102,7 +107,7 @@ public class OpenItemListener implements ActionListener{
 				// testing to get title
 				System.out.println(file.getName());
 				String s = file.getName();
-				System.out.println(file.getName().split("\\."));
+//				System.out.println(file.getName().split("\\."));
 				String title = frame.getTitle() + " - "+file.getName().split("\\.")[0];
 				frame.setTitle(title);
 				frame.setVisible(true);
@@ -112,15 +117,23 @@ public class OpenItemListener implements ActionListener{
 				ObjectInputStream in = new ObjectInputStream(fileIn);
 				SavingList temp_saving_list = (SavingList) in.readObject();
 				saveItem.setSavingList(temp_saving_list);
+				
 				this.saving_list=temp_saving_list;
 				
 				fpItem.saveObjectArray=temp_saving_list.saveObjectArray;
+				fpItem.tab_index=fpItem.saveObjectArray.size()+1;
 				this.saving_list.saveObjectArray = fpItem.saveObjectArray;
 				this.projectInfo = temp_saving_list.projectInfo;
+				lanItem.projectInfo = this.projectInfo;
+				saveItem.projectInfo = this.projectInfo;
+				// test
+//				System.out.println(this.saving_list.activeTabTitle);
 				
 				in.close();
 				fileIn.close();
 				open.isOpen=true;
+				// enable
+				metrics.setEnabled(true);
 			} catch (IOException i) {
 				i.printStackTrace();
 				return;
@@ -157,7 +170,6 @@ public class OpenItemListener implements ActionListener{
 			JPanel panel = new JPanel();
 			tabPane.addTab("SMI", panel);
 			frame.getContentPane().add(tabPane, BorderLayout.CENTER);
-			
 			frame.setVisible(true);
 			
 			String[] header = {"SMI","SMI Added","SMI Changed","SMI Deleted","Total Modules"};
@@ -202,6 +214,14 @@ public class OpenItemListener implements ActionListener{
 		    panel.add(sp);
 		    panel.add(addRow);
 		    panel.add(computeIndex);
+		    
+		    // open the active panel
+		    System.out.println("In OpenItem: ");
+		    System.out.println(this.saving_list.activeTabTitle);
+		    
+		    int index = tabPane.indexOfTab(saving_list.activeTabTitle);
+		    System.out.println(index);
+		    tabPane.setSelectedIndex(index);
 		}
 		else {
 			return;
@@ -211,7 +231,10 @@ public class OpenItemListener implements ActionListener{
 	public void functionPoint(SaveModel saveObject) {
 		// add a new tab to current panel
 		JPanel panel = new JPanel();
-		tabPane.addTab("Function Points", panel);
+		
+		// have title
+		tabPane.addTab(saveObject.tabTitle, panel);
+		
 		frame.getContentPane().add(tabPane, BorderLayout.CENTER);
 		frame.setVisible(true);
 		panel.setLayout(null);

@@ -24,7 +24,10 @@ public class LanguageItemListener implements ActionListener  {
     public void actionPerformed(ActionEvent e) { 
     	// a project name must be input before proceeding
     	String hold = projectInfo.newProjectText.getText();
-
+    	
+    	// test
+    	System.out.println(hold);
+    	
 //    	 testing
     	if(hold.equals("") || hold.equals("Project Name cannot be empty")) {
     		System.err.println("Error. Project Name cannot be empty");

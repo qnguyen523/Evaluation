@@ -49,6 +49,9 @@ public class MenuControl {
 	NumberOfRows number_of_rows_when_saving=new NumberOfRows(0);
 	JPanel panel = new JPanel();
 	IsOpen open = new IsOpen();
+	
+	LanguageItemListener lanItem;
+	
     // constructor
     public MenuControl(String projectName) { 
     	saving_list = new SavingList();
@@ -83,8 +86,9 @@ public class MenuControl {
     	file_option[3] = new JMenuItem("Exit");
     	
     	// add ActionListener to JMenu file_option[0]: New operation
+    	metrics.setEnabled(false);
     	newItem = new NewItemListener();
-    	newItem.setFields(frame, saving_list.projectInfo);
+    	newItem.setFields(frame, saving_list.projectInfo,metrics);
     	file_option[0].addActionListener(newItem);
     	
     	// add ActionListener to JMenu file_option[1]: Exit operation
@@ -102,7 +106,7 @@ public class MenuControl {
     	preferences_option1 = new JMenuItem("Language");
     	
     	// could add languageField here to change language
-    	LanguageItemListener lanItem = new LanguageItemListener();
+    	lanItem = new LanguageItemListener();
     	lanItem.setFields(fp, text, languageField,saving_list.projectInfo);
     	preferences_option1.addActionListener(lanItem);
     	
@@ -150,14 +154,14 @@ public class MenuControl {
 	    
     	// add ActionListener to JMenu file_option[2]: Save operation
     	saveItem = new SaveItemListener();
-    	saveItem.setFields(saving_list, saving_list.projectInfo,frame,table);
+    	saveItem.setFields(saving_list, saving_list.projectInfo,frame,table,tabPane);
     	saveItem.setNumberOfRows(number_of_rows_when_opening,number_of_rows_when_saving);
     	file_option[2].addActionListener(saveItem);
 
     	// add ActionListener to JMenu file_option[1]: Open operation
     	openItem = new OpenItemListener();
     	openItem.setFields(saving_list,tabPane,frame,model,addRow,
-    			computeIndex,ar,ci,saveItem,table,saving_list.projectInfo,open,fpItem);
+    			computeIndex,ar,ci,saveItem,table,saving_list.projectInfo,open,fpItem,metrics,lanItem);
     	openItem.SetNumberOfRows(number_of_rows_when_opening,number_of_rows_when_saving);
     	file_option[1].addActionListener(openItem);
 

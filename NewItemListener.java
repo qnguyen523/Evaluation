@@ -9,9 +9,10 @@ public class NewItemListener implements ActionListener {
     	public String projectNameField;
     	JFrame frame;
     	ProjectInfoModel projectInfo; 
+    	JMenu metrics;
     	// set member fields
-    	public void setFields(JFrame frame,ProjectInfoModel projectInfo) {
-    		this.frame=frame;this.projectInfo=projectInfo;
+    	public void setFields(JFrame frame,ProjectInfoModel projectInfo,JMenu metrics) {
+    		this.frame=frame;this.projectInfo=projectInfo;this.metrics=metrics;
     	}
     	// when new button is clicked
     	public void actionPerformed(ActionEvent e) {       
@@ -68,6 +69,9 @@ public class NewItemListener implements ActionListener {
     					String title = newProject.getText() + " - " + projectNameField;
     					frame.setTitle(title);
     					frame.setVisible(true);
+
+    					// enable
+    					metrics.setEnabled(true);
     				}
     				// close
     				newProjectFrame.dispose();
