@@ -41,8 +41,8 @@ import java.util.*;
     	// when Function Points button is clicked
     	public void actionPerformed(ActionEvent e) {
     		// validate before opening new fp tab
-    		System.out.println(saveObject);
-    		System.out.println(saveObjectArray);
+//    		System.out.println(saveObject);
+//    		System.out.println(saveObjectArray);
     		if (saveObject!=null && saveObject.CodeSizeField.getText().equals("")) {
     			JOptionPane.showMessageDialog(null, "Fields cannot be empty before "
 						+ "opening a new FP tab. "

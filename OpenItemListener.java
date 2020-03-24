@@ -99,16 +99,14 @@ public class OpenItemListener implements ActionListener{
 			
 			File file = inputFile.getSelectedFile();
 			try {
-				
-				/*
-				 * testing to get title
+				// testing to get title
 				System.out.println(file.getName());
 				String s = file.getName();
 				System.out.println(file.getName().split("\\."));
 				String title = frame.getTitle() + " - "+file.getName().split("\\.")[0];
 				frame.setTitle(title);
 				frame.setVisible(true);
-				*/
+				
 				
 				FileInputStream fileIn = new FileInputStream(file);
 				ObjectInputStream in = new ObjectInputStream(fileIn);
@@ -118,6 +116,7 @@ public class OpenItemListener implements ActionListener{
 				
 				fpItem.saveObjectArray=temp_saving_list.saveObjectArray;
 				this.saving_list.saveObjectArray = fpItem.saveObjectArray;
+				this.projectInfo = temp_saving_list.projectInfo;
 				
 				in.close();
 				fileIn.close();
@@ -151,13 +150,16 @@ public class OpenItemListener implements ActionListener{
 //			initialize for exit
 			number_of_rows_when_opening.num=number_of_rows_when_saving.num=SMI_list.size();
 					
-			if (SMI_list==null || SMI_list.isEmpty()) {
-				System.out.println("Error with SMI_List");
+			if (SMI_list==null) {
+				System.err.println("Error with SMI_List");
 				return;
 			}
 			JPanel panel = new JPanel();
 			tabPane.addTab("SMI", panel);
 			frame.getContentPane().add(tabPane, BorderLayout.CENTER);
+			
+			frame.setVisible(true);
+			
 			String[] header = {"SMI","SMI Added","SMI Changed","SMI Deleted","Total Modules"};
 			String[][] rec = {
 
@@ -185,11 +187,15 @@ public class OpenItemListener implements ActionListener{
 		    
 		    SMI lastSMI = new SMI();
 		    ci.setFields(table,lastSMI,SMI_list);
-		    int lastTotal = SMI_list.get(SMI_list.size()-1).currentTotal;
+		    
 		    SMI last_smi = new SMI();
 		    ci.setFields(table,last_smi,SMI_list);
 		    ci.setNumberOfRows(number_of_rows_when_opening,number_of_rows_when_saving);
-		    ci.setLastTotal(lastTotal);
+//		    ci.setLastTotal(lastTotal);
+		    if (!SMI_list.isEmpty()) {
+		    	int lastTotal = SMI_list.get(SMI_list.size()-1).currentTotal;
+		    	ci.setLastTotal(lastTotal);
+		    }
 
 		    sp.setPreferredSize( new Dimension(700,400) );
 		    table.setGridColor(Color.RED);

@@ -30,7 +30,7 @@ public class MenuControl {
     public JTextField languageField;
 
     // save and open operation
-    ProjectInfoModel projectInfo;
+//    ProjectInfoModel projectInfo;
     JTabbedPane tabPane;
     SavingList saving_list;
     SaveItemListener saveItem;
@@ -57,7 +57,7 @@ public class MenuControl {
     	text = new String();
     	fp = new FPModel();
     	languageField = new JTextField(2);
-    	projectInfo = new ProjectInfoModel();
+//    	projectInfo = new ProjectInfoModel();
     	tabPane = new JTabbedPane();
     	
     	frame = new JFrame(projectName);
@@ -84,7 +84,7 @@ public class MenuControl {
     	
     	// add ActionListener to JMenu file_option[0]: New operation
     	newItem = new NewItemListener();
-    	newItem.setFields(frame, projectInfo);
+    	newItem.setFields(frame, saving_list.projectInfo);
     	file_option[0].addActionListener(newItem);
     	
     	// add ActionListener to JMenu file_option[1]: Exit operation
@@ -103,7 +103,7 @@ public class MenuControl {
     	
     	// could add languageField here to change language
     	LanguageItemListener lanItem = new LanguageItemListener();
-    	lanItem.setFields(fp, text, languageField,projectInfo);
+    	lanItem.setFields(fp, text, languageField,saving_list.projectInfo);
     	preferences_option1.addActionListener(lanItem);
     	
     	// add to preferences
@@ -150,14 +150,14 @@ public class MenuControl {
 	    
     	// add ActionListener to JMenu file_option[2]: Save operation
     	saveItem = new SaveItemListener();
-    	saveItem.setFields(saving_list, projectInfo,frame,table);
+    	saveItem.setFields(saving_list, saving_list.projectInfo,frame,table);
     	saveItem.setNumberOfRows(number_of_rows_when_opening,number_of_rows_when_saving);
     	file_option[2].addActionListener(saveItem);
 
     	// add ActionListener to JMenu file_option[1]: Open operation
     	openItem = new OpenItemListener();
     	openItem.setFields(saving_list,tabPane,frame,model,addRow,
-    			computeIndex,ar,ci,saveItem,table,projectInfo,open,fpItem);
+    			computeIndex,ar,ci,saveItem,table,saving_list.projectInfo,open,fpItem);
     	openItem.SetNumberOfRows(number_of_rows_when_opening,number_of_rows_when_saving);
     	file_option[1].addActionListener(openItem);
 
@@ -165,7 +165,7 @@ public class MenuControl {
     	// add ActionListener for smi
     	
     	sl.setFields(frame,tabPane,saving_list,saveItem,model,table,panel,
-    			sp,addRow,computeIndex,projectInfo);
+    			sp,addRow,computeIndex,saving_list.projectInfo);
     	smi_item.addActionListener(sl);
     	openItem.set_SMI_Listener(sl);
     	
@@ -197,6 +197,7 @@ public class MenuControl {
     			if (open.isOpen) {
     				saving_list.SMI_list = openItem.SMI_list;
     				saving_list.saveObjectArray = openItem.fpItem.saveObjectArray;
+    				saving_list.projectInfo = openItem.projectInfo;
     				model = openItem.model;
     			}
     			
@@ -233,7 +234,7 @@ public class MenuControl {
     					null, options, options[1]);
 
     			if (choice==0) {
-    				String projectName = projectInfo.newProjectText.getText();
+    				String projectName = saving_list.projectInfo.newProjectText.getText();
     				String fileName = projectName+".ms";
     				if (fileName.equals("Project Name cannot be empty.ms")
     						|| fileName.equals(".ms")) {

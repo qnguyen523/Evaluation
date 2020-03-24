@@ -58,18 +58,29 @@ public class SaveItemListener implements ActionListener{
 //			return;
 //		}
 		// validate
-		if (table==null || table.getRowCount()==0) {
+//		if (table==null || table.getRowCount()==0) {
+		if (table==null) {
+			System.out.println("table is not okay");
 			System.err.println("Error with table");
 			JOptionPane.showMessageDialog(null, "You must add SMI panel and save before closing", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		int numOfRows = table.getRowCount();
-		// last smi cell
-		if (((String) table.getValueAt(numOfRows-1, 0)).isEmpty()) {
-			System.err.println("Error");
-			JOptionPane.showMessageDialog(null, "You must compute before saving", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
+		
+		// validate
+		if (table.getRowCount()==0) {
+			System.out.println("the number of rows is 0");
+//			return;
 		}
+		else {
+			int numOfRows = table.getRowCount();
+			// last smi cell
+			if (((String) table.getValueAt(numOfRows-1, 0)).isEmpty()) {
+				System.err.println("Error");
+				JOptionPane.showMessageDialog(null, "You must compute before saving", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		}
+		
 		// save a file
 		try {
 			FileOutputStream fileOut = new FileOutputStream(fileName);
