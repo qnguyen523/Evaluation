@@ -126,8 +126,6 @@ public class OpenItemListener implements ActionListener{
 				this.projectInfo = temp_saving_list.projectInfo;
 				lanItem.projectInfo = this.projectInfo;
 				saveItem.projectInfo = this.projectInfo;
-				// test
-//				System.out.println(this.saving_list.activeTabTitle);
 				
 				in.close();
 				fileIn.close();
@@ -216,11 +214,10 @@ public class OpenItemListener implements ActionListener{
 		    panel.add(computeIndex);
 		    
 		    // open the active panel
-		    System.out.println("In OpenItem: ");
-		    System.out.println(this.saving_list.activeTabTitle);
-		    
+//		    System.out.println("In OpenItem: ");
+//		    System.out.println(this.saving_list.activeTabTitle);
 		    int index = tabPane.indexOfTab(saving_list.activeTabTitle);
-		    System.out.println(index);
+//		    System.out.println(index);
 		    tabPane.setSelectedIndex(index);
 		}
 		else {

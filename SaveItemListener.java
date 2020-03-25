@@ -97,6 +97,7 @@ public class SaveItemListener implements ActionListener{
 			System.out.println(saving_list.saveObjectArray);
 			System.out.println(saving_list.SMI_list);
 			System.out.println("In SaveItemListener: saving_list.activeTabTitle: "+saving_list.activeTabTitle);
+			System.out.println(saving_list.projectInfo.newProjectText.getText());
 			
 			out.writeObject(saving_list);
 			

@@ -149,7 +149,7 @@ public class MenuControl {
 		// add ActionListener for metrics_option1
     	fpItem = new FunctionPointItemListener();
     	sl = new SMI_Listener();
-    	fpItem.setFields(lanItem,frame,fp,languageField,tabPane,saving_list.saveObjectArray,sl);
+    	fpItem.setFields(lanItem,frame,fp,languageField,tabPane,saving_list.saveObjectArray,sl,table);
     	metrics_option1.addActionListener(fpItem);
 	    
     	// add ActionListener to JMenu file_option[2]: Save operation

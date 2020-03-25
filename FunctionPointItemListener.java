@@ -24,6 +24,7 @@ import java.util.*;
     	
     	int tab_index=1;
     	String tabTitle = "";
+    	JTable table;
     	// set panel
     	public void setPanel(JPanel panel) {
     		this.panel=panel;
@@ -31,7 +32,8 @@ import java.util.*;
     	// set fields
     	public void setFields(LanguageItemListener lanItem, JFrame frame, FPModel fp,
     			JTextField languageField, JTabbedPane tabPane,
-    			ArrayList<SaveModel> saveObjectArray,SMI_Listener sl) {
+    			ArrayList<SaveModel> saveObjectArray,SMI_Listener sl,
+    			JTable table) {
     		this.lanItem=lanItem;
     		this.frame=frame;
 //    		this.fp=fp;
@@ -40,6 +42,7 @@ import java.util.*;
     		this.tabPane=tabPane;
     		this.saveObjectArray=saveObjectArray;
     		this.sl=sl;
+    		this.table=table;
     	}
     	// when Function Points button is clicked
     	public void actionPerformed(ActionEvent e) {
@@ -100,15 +103,19 @@ import java.util.*;
     		}
     		
     		tabTitle = "Function Points "+tab_index;
-    		tabPane.addTab(tabTitle, panel);
-    		tab_index++;
     		
-    		System.out.println("Panel name:" + panel.getName());
+    		// add to last position of saveObjectArray
+    		tabPane.insertTab(tabTitle,null,panel,"", saveObjectArray.size());
+    		tabPane.setSelectedIndex(saveObjectArray.size());
+    		tab_index++;
     		
     		frame.getContentPane().add(tabPane, BorderLayout.CENTER);
     	    frame.setVisible(true);
     	    panel.setLayout(null);
     	    
+//    	    int index=tabPane.getSelectedIndex();
+//    	    System.out.println("Tab's name:" + tabPane.getTitleAt(index));
+
     	    // labels
     	    JLabel weightingFactors = new JLabel("Weighting Factors", JLabel.CENTER);
     	    JLabel simple = new JLabel("Simple   Average   Complex", JLabel.CENTER);
