@@ -20,6 +20,7 @@ public class AddCodeListener implements ActionListener {
 	public JTabbedPane tabPane;
 	public JMenuItem statistics;
 	public ArrayList<String> file_names;
+	public ArrayList<String> names;
 	public SaveItemListener saveItem;
 	public class MyPanel {
 		JPanel panel;
@@ -34,7 +35,8 @@ public class AddCodeListener implements ActionListener {
 		this.statistics=statistics;
 	}
 	public void actionPerformed(ActionEvent e) {
-		file_names = new ArrayList<>();
+		names = new ArrayList<String>();
+//		file_names = new ArrayList<>();
 		File f = new File("/Users/Peter/Documents/workspace/Test-Antlr/");
 		JFileChooser inputFile=new JFileChooser(f);
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(".java", "txt", "java");
@@ -49,7 +51,7 @@ public class AddCodeListener implements ActionListener {
 			for (int i=0; i<my_panels.length; i++) {
 				my_panels[i] = new MyPanel();
 				my_panels[i].panel = new JPanel();
-				file_names.add(files[i].getPath());
+				names.add(files[i].getPath());
 				String msg = "File name: "+files[i].getName()+
 						"\nClick Project code statistics option for statistics";
 				my_panels[i].display = new JTextArea(msg,25,60);
@@ -64,7 +66,12 @@ public class AddCodeListener implements ActionListener {
 			frame.getContentPane().add(tabPane, BorderLayout.CENTER);
 			frame.setVisible(true);
 			
-			statistics.addActionListener(new Statistics());
+			// save
+			file_names.addAll(names);
+//			saveItem.saving_list.file_names.addAll(file_names);
+			// trigger to show statistics
+			if (statistics.getActionListeners().length == 0)
+				statistics.addActionListener(new Statistics());
 		} else {
 			// Cancel button is clicked
 			System.err.println("Cancel button is clicked");
@@ -75,17 +82,17 @@ public class AddCodeListener implements ActionListener {
 	// inner class
 	public class Statistics implements ActionListener  {
 		public void actionPerformed(ActionEvent e) {
-			if (file_names == null || file_names.isEmpty()) {
+			if (names == null || names.isEmpty()) {
 				System.err.println("Errors with file names");
 				return;
 			}
 			
 			// show statistics
-			for (int i=0; i<file_names.size(); i++) {
-				File file = new File(file_names.get(i));
+			for (int i=0; i<names.size(); i++) {
+				File file = new File(names.get(i));
 				StringBuilder sb = new StringBuilder();
 				try {
-					JavaJavaLexer lexer = new JavaJavaLexer(new ANTLRFileStream(file_names.get(i)));
+					JavaJavaLexer lexer = new JavaJavaLexer(new ANTLRFileStream(names.get(i)));
 					CommonTokenStream tokens = new CommonTokenStream(lexer);
 					JavaJavaParser parser = new JavaJavaParser(tokens);
 					parser.compilationUnit();
@@ -103,9 +110,9 @@ public class AddCodeListener implements ActionListener {
 			}
 			
 			// save
-			System.out.println("file_names in AddCodeLis: "+file_names);
+			System.out.println("file_names in AddCodeLis: "+names);
 //			saveItem.saving_list.file_names = file_names;
-			saveItem.saving_list.file_names.addAll(file_names);
+//			saveItem.saving_list.file_names.addAll(file_names);
 		}
 		public void file_stats(JavaJavaParser parser, JavaJavaLexer lexer, File file,StringBuilder sb) {
 			float percent_of_comments = (float) (lexer.line_of_comments * 100.0/lexer.line_of_code);

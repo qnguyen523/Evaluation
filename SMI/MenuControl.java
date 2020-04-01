@@ -179,7 +179,7 @@ public class MenuControl {
 		// add ActionListener to JMenu file_option[1]: Open operation
 		openItem = new OpenItemListener();
 		openItem.setFields(saving_list, tabPane, frame, model, addRow, computeIndex, ar, ci, saveItem, table,
-				saving_list.projectInfo, open, fpItem, metrics, lanItem,project_code,add_code_listener);
+				saving_list.projectInfo, open, fpItem, metrics, lanItem,project_code,add_code_listener,this);
 		openItem.SetNumberOfRows(number_of_rows_when_opening, number_of_rows_when_saving);
 		file_option[1].addActionListener(openItem);
 

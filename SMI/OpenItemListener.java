@@ -51,6 +51,7 @@ public class OpenItemListener implements ActionListener {
 	ArrayList<String> file_names;
 	public JMenu project_code;
 	AddCodeListener add_code_listener;
+	MenuControl menuControl;
 	// open panels of statistics
 	public class MyPanel {
 		JPanel panel;
@@ -73,7 +74,7 @@ public class OpenItemListener implements ActionListener {
 	public void setFields(SavingList saving_list, JTabbedPane tabPane, JFrame frame, DefaultTableModel model,
 			Button addRow, Button computeIndex, AddRow ar, ComputeIndex ci, SaveItemListener saveItem, JTable table,
 			ProjectInfoModel projectInfo, IsOpen open, FunctionPointItemListener fpItem, JMenu metrics,
-			LanguageItemListener lanItem,JMenu project_code,AddCodeListener add_code_listener) {
+			LanguageItemListener lanItem,JMenu project_code,AddCodeListener add_code_listener,MenuControl menuControl) {
 		// this.saveObject=saveObject;
 		this.tabPane = tabPane;
 		this.frame = frame;
@@ -92,6 +93,7 @@ public class OpenItemListener implements ActionListener {
 		this.lanItem = lanItem;
 		this.project_code=project_code;
 		this.add_code_listener=add_code_listener;
+		this.menuControl=menuControl;
 	}
 
 	// create a row
@@ -150,6 +152,7 @@ public class OpenItemListener implements ActionListener {
 				lanItem.projectInfo = this.projectInfo;
 				sl.projectInfo = this.projectInfo;;
 				saveItem.projectInfo = this.projectInfo;
+				ci.list = temp_saving_list.SMI_list;
 
 				in.close();
 				fileIn.close();
@@ -284,7 +287,7 @@ public class OpenItemListener implements ActionListener {
 
 			// save file_names
 			saveItem.saving_list.file_names = file_names;
-//			add_code_listener.file_names = file_names;
+			add_code_listener.file_names = file_names;
 			
 			// open the active panel
 			int index = tabPane.indexOfTab(saving_list.activeTabTitle);
