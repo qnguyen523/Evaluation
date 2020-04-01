@@ -144,7 +144,10 @@ public class AddCodeListener implements ActionListener {
 			sb.append("\t"+"Program vocabulary (n) = " + n+"\n");
 			sb.append("\t"+"Volume = " + V+"\n");
 			sb.append("\t"+"Difficulty = " + D+"\n");
-			sb.append("\t"+"Effort = " + T+"\n");
+			sb.append("\t"+"Effort = " + E+"\n");
+			String hold = String.format("\tTime = %.3f sec (%.3f mins or %.3f hrs or %.3f person-months)\n",
+					T,T/60.0,T/(60.0*60.0),T/(60.0*60.0*140.0));
+			sb.append(hold);
 			sb.append("\t"+"Bugs expected = " + B+"\n");
 		}
 	}
