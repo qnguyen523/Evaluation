@@ -37,7 +37,7 @@ public class AddCodeListener implements ActionListener {
 		file_names = new ArrayList<>();
 		File f = new File("/Users/Peter/Documents/workspace/Test-Antlr/");
 		JFileChooser inputFile=new JFileChooser(f);
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(".java", "txt", "java");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(".java", "java");
 		inputFile.setFileFilter(filter);
 		inputFile.setMultiSelectionEnabled(true);
 		// open file
