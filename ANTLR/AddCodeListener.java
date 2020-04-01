@@ -64,6 +64,9 @@ public class AddCodeListener implements ActionListener {
 			frame.getContentPane().add(tabPane, BorderLayout.CENTER);
 			frame.setVisible(true);
 			
+			// save
+			saveItem.saving_list.file_names.addAll(file_names);
+			// trigger to show statistics
 			statistics.addActionListener(new Statistics());
 		} else {
 			// Cancel button is clicked
@@ -103,9 +106,9 @@ public class AddCodeListener implements ActionListener {
 			}
 			
 			// save
-			System.out.println("file_names in AddCodeLis: "+file_names);
+// 			System.out.println("file_names in AddCodeLis: "+file_names);
 //			saveItem.saving_list.file_names = file_names;
-			saveItem.saving_list.file_names.addAll(file_names);
+// 			saveItem.saving_list.file_names.addAll(file_names);
 		}
 		public void file_stats(JavaJavaParser parser, JavaJavaLexer lexer, File file,StringBuilder sb) {
 			float percent_of_comments = (float) (lexer.line_of_comments * 100.0/lexer.line_of_code);
