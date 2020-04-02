@@ -66,7 +66,7 @@ options {backtrack=true; memoize=true;
 	public int line_count = 0;
 	public int line_of_comments = 0;
 	public int constantcount = 0;
-	public int line_of_code=0;
+	public int line_of_code=1;
 	//public int keywordCount = 0;
  // protected boolean enumIsKeyword = true;
   //protected boolean assertIsKeyword = true;
