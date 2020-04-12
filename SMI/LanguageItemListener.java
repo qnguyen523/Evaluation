@@ -12,7 +12,7 @@ public class LanguageItemListener implements ActionListener {
 	JTextField languageField;
 	SaveModel saveObject;
 	ProjectInfoModel projectInfo;
-
+	JMenuItem  metrics_option1;
 	// set fields
 	public void setFields(FPModel fp, String text, JTextField languageField, ProjectInfoModel projectInfo) {
 		this.fp = fp;
@@ -101,6 +101,9 @@ public class LanguageItemListener implements ActionListener {
 
 		doneButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// set enable
+				metrics_option1.setEnabled(true);
+				
 				if (checkBoxes[0].isSelected()) {
 					fp.currentLanguage = FPModel.LANGUAGE.ASSEMBLER;
 					fp.LOC = 209;

@@ -8,6 +8,10 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.Position;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -51,14 +55,12 @@ public class OpenItemListener implements ActionListener {
 	ArrayList<String> file_names;
 	public JMenu project_code;
 	AddCodeListener add_code_listener;
-	MenuControl menuControl;
 	// open panels of statistics
-	public class MyPanel {
-		JPanel panel;
-		JTextArea display;
-		JScrollPane sp;
-	}
-	MyPanel[] my_panels;
+	ANTLR.AddCodeListener.MyPanel[] my_panels;
+	// JTree
+	JTree jt;
+	MenuControl menuControl;
+	MenuControl.TreePopup treePopup;
 	// save
 	public void set_SMI_Listener(SMI_Listener sl) {
 		this.sl = sl;
@@ -71,19 +73,25 @@ public class OpenItemListener implements ActionListener {
 	}
 
 	// set fields
-	public void setFields(SavingList saving_list, JTabbedPane tabPane, JFrame frame, DefaultTableModel model,
-			Button addRow, Button computeIndex, AddRow ar, ComputeIndex ci, SaveItemListener saveItem, JTable table,
+	public void setFields(SavingList saving_list, JTabbedPane tabPane, JFrame frame, DefaultTableModel model, 
+			SaveItemListener saveItem, JTable table,
 			ProjectInfoModel projectInfo, IsOpen open, FunctionPointItemListener fpItem, JMenu metrics,
-			LanguageItemListener lanItem,JMenu project_code,AddCodeListener add_code_listener,MenuControl menuControl) {
+			LanguageItemListener lanItem,JMenu project_code,AddCodeListener add_code_listener,JTree jt,
+			MenuControl.TreePopup treePopup,MenuControl menuControl) {
 		// this.saveObject=saveObject;
 		this.tabPane = tabPane;
 		this.frame = frame;
 		this.saving_list = saving_list;
 		this.model = model;
-		this.addRow = addRow;
-		this.computeIndex = computeIndex;
-		this.ar = ar;
-		this.ci = ci;
+//		this.addRow = addRow;
+//		this.computeIndex = computeIndex;
+//		this.ar = ar;
+//		this.ci = ci;
+		ar = new AddRow();
+		ci = new ComputeIndex();
+		addRow = new Button("Add Row");
+		computeIndex = new Button("Compute Index");
+		
 		this.saveItem = saveItem;
 		this.table = table;
 		this.projectInfo = projectInfo;
@@ -93,6 +101,8 @@ public class OpenItemListener implements ActionListener {
 		this.lanItem = lanItem;
 		this.project_code=project_code;
 		this.add_code_listener=add_code_listener;
+		this.jt=jt;
+		this.treePopup=treePopup;
 		this.menuControl=menuControl;
 	}
 
@@ -131,11 +141,15 @@ public class OpenItemListener implements ActionListener {
 				// testing to get title
 				System.out.println(file.getName());
 				String s = file.getName();
-				// System.out.println(file.getName().split("\\."));
 				String title = frame.getTitle() + " - " + file.getName().split("\\.")[0];
 				frame.setTitle(title);
 				frame.setVisible(true);
-
+				// set name to root
+				DefaultTreeModel treeModel = (DefaultTreeModel)jt.getModel();
+				DefaultMutableTreeNode root = (DefaultMutableTreeNode)treeModel.getRoot();
+				root.setUserObject(file.getName().split("\\.")[0]);
+				treeModel.reload();
+				// open file
 				FileInputStream fileIn = new FileInputStream(file);
 				ObjectInputStream in = new ObjectInputStream(fileIn);
 				SavingList temp_saving_list = (SavingList) in.readObject();
@@ -150,16 +164,23 @@ public class OpenItemListener implements ActionListener {
 				this.saving_list.saveObjectArray = fpItem.saveObjectArray;
 				this.projectInfo = temp_saving_list.projectInfo;
 				lanItem.projectInfo = this.projectInfo;
-				sl.projectInfo = this.projectInfo;;
+				sl.projectInfo = this.projectInfo;
 				saveItem.projectInfo = this.projectInfo;
 				ci.list = temp_saving_list.SMI_list;
-
+				treePopup.popup_saving_list = temp_saving_list;
+				fpItem.file_map = temp_saving_list.file_map;
+				sl.file_map = temp_saving_list.file_map;
+				add_code_listener.file_map = temp_saving_list.file_map;
+				add_code_listener.file_names = temp_saving_list.file_names;
+				
 				in.close();
 				fileIn.close();
 				open.isOpen = true;
 				// enable
 				metrics.setEnabled(true);
 				project_code.setEnabled(true);
+				
+//				System.err.println(saving_list.file_map);
 			} catch (IOException i) {
 				i.printStackTrace();
 				return;
@@ -172,36 +193,45 @@ public class OpenItemListener implements ActionListener {
 			// take care of fp panels
 			saveObjectArray = new ArrayList<SaveModel>();
 			saveObjectArray = (ArrayList<SaveModel>) saving_list.saveObjectArray.clone();
-
-			System.out.println("In OpenItem " + saveObjectArray);
-			System.out.println(this.saving_list.saveObjectArray);
-
+//			System.out.println("In OpenItem " + saveObjectArray);
+//			System.out.println(this.saving_list.saveObjectArray);
 			if (saveObjectArray == null) {
 				System.out.println("Error with saveObjectArray");
 				return;
 			}
 			for (SaveModel i : saving_list.saveObjectArray) {
-				functionPoint(i);
+				functionPoint(i,tabPane);
+				// add node to root
+				DefaultMutableTreeNode node = new DefaultMutableTreeNode(i.tabTitle);
+				DefaultTreeModel treeModel = (DefaultTreeModel)jt.getModel();
+				DefaultMutableTreeNode root = (DefaultMutableTreeNode)treeModel.getRoot();
+				root.add(node);
+				treeModel.reload();
 			}
 			// take care of table
 			SMI_list = saving_list.SMI_list;
 			// initialize for exit
 			number_of_rows_when_opening.num = number_of_rows_when_saving.num = SMI_list.size();
-
+			// validate
 			if (SMI_list == null) {
 				System.err.println("Error with SMI_List");
 				return;
 			}
 			if (!SMI_list.isEmpty()) {
 				JPanel panel = new JPanel();
+				panel.setLayout(null);
 				tabPane.addTab("SMI", panel);
-				frame.getContentPane().add(tabPane, BorderLayout.CENTER);
-				frame.setVisible(true);
+				// add node to root
+				DefaultMutableTreeNode node = new DefaultMutableTreeNode("SMI");
+				DefaultTreeModel treeModel = (DefaultTreeModel)jt.getModel();
+				DefaultMutableTreeNode root = (DefaultMutableTreeNode)treeModel.getRoot();
+				root.add(node);
+				treeModel.reload();
+				// update ui
+				SwingUtilities.updateComponentTreeUI(frame);
 				
 				String[] header = { "SMI", "SMI Added", "SMI Changed", "SMI Deleted", "Total Modules" };
-				String[][] rec = {
-						
-				};
+				String[][] rec = {};
 				panel.setBorder(
 						BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Software Maturity Index"));
 				model = new DefaultTableModel(rec, header) {
@@ -220,148 +250,142 @@ public class OpenItemListener implements ActionListener {
 				}
 				saveItem.setTable(table, model);
 				sl.setTable(table, model);
-				
 				JScrollPane sp = new JScrollPane(table);
-				
-				ar.setField(model, table);
-				
-//			SMI lastSMI = new SMI();
-//			ci.setFields(table, lastSMI, SMI_list);
-				
+				// buttons
 				SMI last_smi = new SMI();
+				ar.setField(model, table);
 				ci.setFields(table, last_smi, SMI_list);
 				ci.setNumberOfRows(number_of_rows_when_opening, number_of_rows_when_saving);
+				addRow.addActionListener(ar);
+				computeIndex.addActionListener(ci);
+				
 				// ci.setLastTotal(lastTotal);
 				if (!SMI_list.isEmpty()) {
 					int lastTotal = SMI_list.get(SMI_list.size() - 1).currentTotal;
 					ci.setLastTotal(lastTotal);
 				}
 				
-				sp.setPreferredSize(new Dimension(700, 400));
+				sp.setPreferredSize(new Dimension(600, 400));
 				table.setGridColor(Color.RED);
+				// set bounds
+				sp.setBounds(50,20,600,400);
+				addRow.setBounds(200,440,150,20);
+				computeIndex.setBounds(400,440,150,20);
+				// add to panel
 				panel.add(sp);
 				panel.add(addRow);
 				panel.add(computeIndex);
 			}
-
+			
 			// take care of code statistics
 			if (!file_names.isEmpty()) {
-				my_panels = new MyPanel[file_names.size()];
+				my_panels = new ANTLR.AddCodeListener.MyPanel[file_names.size()];
 				for (int i=0; i<file_names.size(); i++) {
 					File F = new File(file_names.get(i));
-					my_panels[i] = new MyPanel();
+					my_panels[i] = add_code_listener.new MyPanel();
 					my_panels[i].panel = new JPanel();
-					String msg = "File name: "+file_names.get(i)+
-							"\nClick Project code statistics option for statistics";
-					my_panels[i].display = new JTextArea(msg,25,60);
-					my_panels[i].display.setEditable(false);
-					my_panels[i].sp = new JScrollPane(my_panels[i].display);
-					my_panels[i].sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-					my_panels[i].panel.add(my_panels[i].sp);
-					tabPane.addTab(F.getName(), my_panels[i].panel);
-					
-					// show statistics
-					
-					StringBuilder sb = new StringBuilder();
-					try {
-						JavaJavaLexer lexer = new JavaJavaLexer(new ANTLRFileStream(file_names.get(i)));
-						CommonTokenStream tokens = new CommonTokenStream(lexer);
-						JavaJavaParser parser = new JavaJavaParser(tokens);
-						parser.compilationUnit();
-						new AddCodeListener().new Statistics().file_stats(parser,lexer,F,sb);
-						new AddCodeListener().new Statistics().halstead(parser,lexer,sb);
-						new AddCodeListener().new Statistics().mccabe(parser,sb);
-					} catch (IOException | RecognitionException e1) {
-						e1.printStackTrace();
-					}
-					
-					// test output
-					System.out.println(sb);
-					my_panels[i].display.setText(sb.toString());
+					my_panels[i].sb = new StringBuilder();
+					add_code_listener.new Statistics().parse(F,my_panels[i].sb,my_panels[i],tabPane,false);
+					// add node to root
+					DefaultMutableTreeNode node = new DefaultMutableTreeNode(F.getName());
+					DefaultTreeModel treeModel = (DefaultTreeModel)jt.getModel();
+					DefaultMutableTreeNode root = (DefaultMutableTreeNode)treeModel.getRoot();
+					root.add(node);
+					treeModel.reload();
 				}
 			}
-				
-			// add tabPane to frame
-			frame.getContentPane().add(tabPane, BorderLayout.CENTER);
-			frame.setVisible(true);
-
+			
+			// update ui
+			SwingUtilities.updateComponentTreeUI(frame);
 			// save file_names
 			saveItem.saving_list.file_names = file_names;
 			add_code_listener.file_names = file_names;
-			
 			// open the active panel
 			int index = tabPane.indexOfTab(saving_list.activeTabTitle);
 			tabPane.setSelectedIndex(index);
+				
 		} else {
 			return;
 		}
 	}
+	// take care of SMI
+	public void smi(ArrayList<SMI> SMI_list, JTabbedPane tabPane) {
+		JPanel panel = new JPanel();
+		tabPane.addTab("SMI", panel);
+		String[] header = { "SMI", "SMI Added", "SMI Changed", "SMI Deleted", "Total Modules" };
+		String[][] rec = {};
+		panel.setBorder(
+				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Software Maturity Index"));
+		model = new DefaultTableModel(rec, header) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				if (row == this.getRowCount() - 1 && (column == 1 || column == 2 || column == 3))
+					return true;
+				else
+					return false;
+			}
+		};
+		JTable table = new JTable(model);
+
+		// add to JTable
+		for (SMI x : SMI_list) {
+			model.addRow(new String[] { x.smi + "", x.added + "", x.changed + "", x.deleted + "", x.currentTotal + "" });
+		}
+		JScrollPane sp = new JScrollPane(table);
+		// buttons
+		SMI last_smi = new SMI();
+		Button addRow = new Button("Add Row");
+		Button computeIndex = new Button("Compute Index");
+
+		AddRow ar = new AddRow();
+		ar.setField(model, table);
+		addRow.addActionListener(ar);
+		
+		ComputeIndex ci = new ComputeIndex();
+		ci.setFields(table, last_smi, SMI_list);
+		ci.setNumberOfRows(number_of_rows_when_opening, number_of_rows_when_saving);
+		computeIndex.addActionListener(ci);
+
+		if (!SMI_list.isEmpty()) {
+			int lastTotal = SMI_list.get(SMI_list.size() - 1).currentTotal;
+			ci.setLastTotal(lastTotal);
+		}
+		
+		sp.setPreferredSize(new Dimension(600, 400));
+		table.setGridColor(Color.RED);
+		// set bounds
+		sp.setBounds(50,20,600,400);
+		addRow.setBounds(200,440,150,20);
+		computeIndex.setBounds(400,440,150,20);
+		// set bounds
+		sp.setBounds(50,20,600,400);
+		addRow.setBounds(200,440,150,20);
+		computeIndex.setBounds(400,440,150,20);
+		// add to panel
+		panel.add(sp);
+		panel.add(addRow);
+		panel.add(computeIndex);
+	}
 
 	// take care of function point
-	public void functionPoint(SaveModel saveObject) {
+	public void functionPoint(SaveModel saveObject,JTabbedPane tabPane) {
+		 
+		
 		// add a new tab to current panel
 		JPanel panel = new JPanel();
-
 		// have title
 		tabPane.addTab(saveObject.tabTitle, panel);
-
-		frame.getContentPane().add(tabPane, BorderLayout.CENTER);
-//		frame.setVisible(true);
+//		frame.getContentPane().add(tabPane, BorderLayout.CENTER);
 		panel.setLayout(null);
-
 		// labels
 		JLabel weightingFactors = new JLabel("Weighting Factors", JLabel.CENTER);
 		JLabel simple = new JLabel("Simple   Average   Complex", JLabel.CENTER);
-
 		// set bounds
 		weightingFactors.setBounds(0, 10, 800, 20);
 		simple.setBounds(0, 30, 800, 20);
-
 		// add to panel
 		panel.add(weightingFactors);
 		panel.add(simple);
-
-		// labels
-		saveObject.id[EI].label = new JLabel("External Inputs");
-		saveObject.id[EO].label = new JLabel("External Outputs");
-		saveObject.id[EInq].label = new JLabel("External Inquiries");
-		saveObject.id[ILF].label = new JLabel("Internal Logical Files");
-		saveObject.id[EIF].label = new JLabel("External Interface Files");
-
-		// complexity values or weighting factors
-		int hold = saveObject.id[EI].complexity_value;
-		saveObject.id[EI].radioButtons[SIMPLE] = new JRadioButton("3", 3 == hold ? true : false);
-		saveObject.id[EI].radioButtons[AVERAGE] = new JRadioButton("4", 4 == hold ? true : false);
-		saveObject.id[EI].radioButtons[COMPLEX] = new JRadioButton("6", 6 == hold ? true : false);
-		hold = saveObject.id[EO].complexity_value;
-		saveObject.id[EO].radioButtons[SIMPLE] = new JRadioButton("4", 4 == hold ? true : false);
-		saveObject.id[EO].radioButtons[AVERAGE] = new JRadioButton("5", 5 == hold ? true : false);
-		saveObject.id[EO].radioButtons[COMPLEX] = new JRadioButton("7", 7 == hold ? true : false);
-		hold = saveObject.id[EInq].complexity_value;
-		saveObject.id[EInq].radioButtons[SIMPLE] = new JRadioButton("3", 3 == hold ? true : false);
-		saveObject.id[EInq].radioButtons[AVERAGE] = new JRadioButton("4", 4 == hold ? true : false);
-		saveObject.id[EInq].radioButtons[COMPLEX] = new JRadioButton("6", 6 == hold ? true : false);
-		hold = saveObject.id[ILF].complexity_value;
-		saveObject.id[ILF].radioButtons[SIMPLE] = new JRadioButton("7", 7 == hold ? true : false);
-		saveObject.id[ILF].radioButtons[AVERAGE] = new JRadioButton("10", 10 == hold ? true : false);
-		saveObject.id[ILF].radioButtons[COMPLEX] = new JRadioButton("15", 15 == hold ? true : false);
-		hold = saveObject.id[EIF].complexity_value;
-		saveObject.id[EIF].radioButtons[SIMPLE] = new JRadioButton("5", 5 == hold ? true : false);
-		saveObject.id[EIF].radioButtons[AVERAGE] = new JRadioButton("7", 7 == hold ? true : false);
-		saveObject.id[EIF].radioButtons[COMPLEX] = new JRadioButton("10", 10 == hold ? true : false);
-
-		// group the radio buttons
-		saveObject.id[EI].group = new ButtonGroup();
-		saveObject.id[EI].addToGroup(saveObject.id[EI].group, saveObject.id[EI].radioButtons);
-		saveObject.id[EO].group = new ButtonGroup();
-		saveObject.id[EO].addToGroup(saveObject.id[EO].group, saveObject.id[EO].radioButtons);
-		saveObject.id[EInq].group = new ButtonGroup();
-		saveObject.id[EInq].addToGroup(saveObject.id[EInq].group, saveObject.id[EInq].radioButtons);
-		saveObject.id[ILF].group = new ButtonGroup();
-		saveObject.id[ILF].addToGroup(saveObject.id[ILF].group, saveObject.id[ILF].radioButtons);
-		saveObject.id[EIF].group = new ButtonGroup();
-		saveObject.id[EIF].addToGroup(saveObject.id[EIF].group, saveObject.id[EIF].radioButtons);
-
 		// take care of the second half of panel
 		Button compute_FP_button = new Button("Compute FP");
 		Button VAF_button = new Button("Value Adjustment");
@@ -371,79 +395,16 @@ public class OpenItemListener implements ActionListener {
 		JLabel totalCount = new JLabel("Total Count");
 
 		// setbounds
-		saveObject.id[EI].label.setBounds(10, 50, 180, 20);
-		saveObject.id[EO].label.setBounds(10, 70, 180, 20);
-		saveObject.id[EInq].label.setBounds(10, 90, 180, 20);
-		saveObject.id[ILF].label.setBounds(10, 110, 180, 20);
-		saveObject.id[EIF].label.setBounds(10, 130, 180, 20);
-		saveObject.id[EI].input.setBounds(190, 50, 50, 20);
-		saveObject.id[EO].input.setBounds(190, 70, 50, 20);
-		saveObject.id[EInq].input.setBounds(190, 90, 50, 20);
-		saveObject.id[ILF].input.setBounds(190, 110, 50, 20);
-		saveObject.id[EIF].input.setBounds(190, 130, 50, 20);
-		saveObject.id[EI].radioButtons[SIMPLE].setBounds(280, 50, 90, 20);
-		saveObject.id[EI].radioButtons[AVERAGE].setBounds(370, 50, 90, 20);
-		saveObject.id[EI].radioButtons[COMPLEX].setBounds(460, 50, 90, 20);
-		saveObject.id[EO].radioButtons[SIMPLE].setBounds(280, 70, 90, 20);
-		saveObject.id[EO].radioButtons[AVERAGE].setBounds(370, 70, 90, 20);
-		saveObject.id[EO].radioButtons[COMPLEX].setBounds(460, 70, 90, 20);
-		saveObject.id[EInq].radioButtons[SIMPLE].setBounds(280, 90, 90, 20);
-		saveObject.id[EInq].radioButtons[AVERAGE].setBounds(370, 90, 90, 20);
-		saveObject.id[EInq].radioButtons[COMPLEX].setBounds(460, 90, 90, 20);
-		saveObject.id[ILF].radioButtons[SIMPLE].setBounds(280, 110, 90, 20);
-		saveObject.id[ILF].radioButtons[AVERAGE].setBounds(370, 110, 90, 20);
-		saveObject.id[ILF].radioButtons[COMPLEX].setBounds(460, 110, 90, 20);
-		saveObject.id[EIF].radioButtons[SIMPLE].setBounds(280, 130, 90, 20);
-		saveObject.id[EIF].radioButtons[AVERAGE].setBounds(370, 130, 90, 20);
-		saveObject.id[EIF].radioButtons[COMPLEX].setBounds(460, 130, 90, 20);
-		saveObject.id[EI].output.setBounds(550, 50, 80, 20);
-		saveObject.id[EO].output.setBounds(550, 70, 80, 20);
-		saveObject.id[EInq].output.setBounds(550, 90, 80, 20);
-		saveObject.id[ILF].output.setBounds(550, 110, 80, 20);
-		saveObject.id[EIF].output.setBounds(550, 130, 80, 20);
 		totalCount.setBounds(10, 160, 180, 20);
-		saveObject.total.setBounds(550, 160, 80, 20);
 		compute_FP_button.setBounds(10, 200, 180, 20);
 		VAF_button.setBounds(10, 240, 180, 20);
 		compute_code_size_button.setBounds(10, 280, 180, 20);
 		change_language_button.setBounds(10, 320, 180, 20);
 		currentLanguage.setBounds(240, 280, 140, 20);
-		saveObject.languageField.setBounds(380, 280, 100, 20);
-		saveObject.FPField.setBounds(550, 200, 120, 20);
-		saveObject.VAFField.setBounds(550, 240, 80, 20);
-		saveObject.CodeSizeField.setBounds(550, 280, 120, 20);
 
 		// add to panel
-		panel.add(saveObject.id[EI].label);
-		panel.add(saveObject.id[EO].label);
-		panel.add(saveObject.id[EInq].label);
-		panel.add(saveObject.id[ILF].label);
-		panel.add(saveObject.id[EIF].label);
-		panel.add(saveObject.id[EI].input);
-		panel.add(saveObject.id[EO].input);
-		panel.add(saveObject.id[EInq].input);
-		panel.add(saveObject.id[ILF].input);
-		panel.add(saveObject.id[EIF].input);
-		panel.add(saveObject.id[EI].radioButtons[SIMPLE]);
-		panel.add(saveObject.id[EI].radioButtons[AVERAGE]);
-		panel.add(saveObject.id[EI].radioButtons[COMPLEX]);
-		panel.add(saveObject.id[EO].radioButtons[SIMPLE]);
-		panel.add(saveObject.id[EO].radioButtons[AVERAGE]);
-		panel.add(saveObject.id[EO].radioButtons[COMPLEX]);
-		panel.add(saveObject.id[EInq].radioButtons[SIMPLE]);
-		panel.add(saveObject.id[EInq].radioButtons[AVERAGE]);
-		panel.add(saveObject.id[EInq].radioButtons[COMPLEX]);
-		panel.add(saveObject.id[ILF].radioButtons[SIMPLE]);
-		panel.add(saveObject.id[ILF].radioButtons[AVERAGE]);
-		panel.add(saveObject.id[ILF].radioButtons[COMPLEX]);
-		panel.add(saveObject.id[EIF].radioButtons[SIMPLE]);
-		panel.add(saveObject.id[EIF].radioButtons[AVERAGE]);
-		panel.add(saveObject.id[EIF].radioButtons[COMPLEX]);
-		panel.add(saveObject.id[EI].output);
-		panel.add(saveObject.id[EO].output);
-		panel.add(saveObject.id[EInq].output);
-		panel.add(saveObject.id[ILF].output);
-		panel.add(saveObject.id[EIF].output);
+		new FunctionPointItemListener().add_id_to_panel(panel, saveObject.id);
+//		fpItem.add_id_to_panel(panel, saveObject.id);
 		panel.add(currentLanguage);
 		panel.add(compute_FP_button);
 		panel.add(VAF_button);
@@ -455,30 +416,25 @@ public class OpenItemListener implements ActionListener {
 		panel.add(saveObject.CodeSizeField);
 		panel.add(totalCount);
 		panel.add(saveObject.total);
-
 		// compute fp
-		ComputeFP fpItem = new ComputeFP();
+		ComputeFP compute_fp = new ComputeFP();
 		VafValue vaf_total_value = new VafValue();
-		fpItem.setFields(saveObject.fp, saveObject.id, saveObject.total, saveObject.VAFField, vaf_total_value,
+		compute_fp.setFields(saveObject.fp, saveObject.id, saveObject.total, saveObject.VAFField, vaf_total_value,
 				saveObject.FPField);
-		compute_FP_button.addActionListener(fpItem);
-
+		compute_FP_button.addActionListener(compute_fp);
 		// vaf frame
 		vafActionListener vafItem = new vafActionListener();
 		vafItem.setFields(vaf_total_value, saveObject.VAFField, saveObject.vaf_array);
 		VAF_button.addActionListener(vafItem);
-
 		// change language
 		ChangeLanguageItemListener changeLanItem = new ChangeLanguageItemListener();
 		changeLanItem.setFields(saveObject.fp, saveObject.languageField);
 		change_language_button.addActionListener(changeLanItem);
-
 		// compute size
 		sizeItem = new ComputeSizeFromSave();
 		int currentCodeSize = Integer.parseInt(saveObject.CodeSizeField.getText().replace(",", ""));
 		sizeItem.setFields(saveObject, currentCodeSize);
 		sizeItem.setTabPane(tabPane);
-
 		compute_code_size_button.addActionListener(sizeItem);
 	}
 }

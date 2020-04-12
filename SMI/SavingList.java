@@ -9,12 +9,13 @@ public class SavingList implements Serializable {
 	public ArrayList<String> file_names;
 	ProjectInfoModel projectInfo;
 	String activeTabTitle = "";
-
+	public Map<String, String> file_map;
 	public SavingList() {
 		saveObjectArray = new ArrayList<SaveModel>();
 		SMI_list = new ArrayList<SMI>();
 		file_names = new ArrayList<>();
 		projectInfo = new ProjectInfoModel();
 		activeTabTitle = "";
+		file_map = new LinkedHashMap<String, String>();
 	}
 }

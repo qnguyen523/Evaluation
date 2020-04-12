@@ -2,6 +2,11 @@ package SMI;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.text.Position;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+
 import java.util.*;
 
 /*
@@ -19,15 +24,17 @@ public class FunctionPointItemListener implements ActionListener {
 	FPModel fp;
 	infomationDomain[] id;
 	JTextField languageField = new JTextField(2);
-	SaveModel saveObject;
+	SaveModel lastObject;
 	ArrayList<SaveModel> saveObjectArray;
 	JPanel panel;// = new JPanel();
 	SMI_Listener sl;
-
-	int tab_index = 1;
+	int tab_index = 0;
 	String tabTitle = "";
 	JTable table;
-
+	// JTree
+	JTree jt;
+	Map<String, String> file_map;
+	MenuControl.TreePopup treePopup;
 	// set panel
 	public void setPanel(JPanel panel) {
 		this.panel = panel;
@@ -35,7 +42,8 @@ public class FunctionPointItemListener implements ActionListener {
 
 	// set fields
 	public void setFields(LanguageItemListener lanItem, JFrame frame, FPModel fp, JTextField languageField,
-			JTabbedPane tabPane, ArrayList<SaveModel> saveObjectArray, SMI_Listener sl, JTable table) {
+			JTabbedPane tabPane, ArrayList<SaveModel> saveObjectArray, SMI_Listener sl, JTable table,
+			JTree jt,Map<String, String> file_map,MenuControl.TreePopup treePopup) {
 		this.lanItem = lanItem;
 		this.frame = frame;
 		// this.fp=fp;
@@ -45,12 +53,17 @@ public class FunctionPointItemListener implements ActionListener {
 		this.saveObjectArray = saveObjectArray;
 		this.sl = sl;
 		this.table = table;
+		this.jt=jt;
+		this.file_map=file_map;
+		this.treePopup=treePopup;
 	}
 
 	// when Function Points button is clicked
 	public void actionPerformed(ActionEvent e) {
+//		System.err.println("In fpItemLis: "+lastObject);
+		
 		// validate before opening new fp tab
-		if (saveObject != null && saveObject.CodeSizeField.getText().equals("")) {
+		if (lastObject != null && lastObject.CodeSizeField.getText().equals("")) {
 			JOptionPane.showMessageDialog(null,
 					"Fields cannot be empty before " + "opening a new FP tab. " + "Please compute before proceeding",
 					"Error", JOptionPane.ERROR_MESSAGE);
@@ -60,7 +73,7 @@ public class FunctionPointItemListener implements ActionListener {
 		vaf_total_value = new VafValue();
 		fp = new FPModel();
 		panel = new JPanel();
-		saveObject = new SaveModel();
+		lastObject = new SaveModel();
 
 		languageField = new JTextField(2);
 		String hold = lanItem.text;
@@ -104,37 +117,99 @@ public class FunctionPointItemListener implements ActionListener {
 		} else {
 			fp.currentLanguage = FPModel.LANGUAGE.DEFAULT;
 		}
-
-		tabTitle = "Function Points " + tab_index;
-
+		
+		JFrame tabTitleFrame = new JFrame("Tab Title");
+		tabTitleFrame.setSize(300,100);
+		tabTitleFrame.setLocation(150, 50);
+		tabTitleFrame.setLayout(null);
+		tabTitleFrame.setVisible(true);
+		
+		JLabel label = new JLabel("Title:");
+		JTextField name = new JTextField(2);
+		Button OKButton = new Button("OK");
+		label.setBounds(10, 15, 50, 20);
+		name.setBounds(60, 15, 150, 20);
+		OKButton.setBounds(200, 15, 70, 20);
+		
+		tabTitleFrame.add(label);
+		tabTitleFrame.add(name);
+		tabTitleFrame.add(OKButton);
+		
+		OKButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				tabTitle = " "+name.getText();
+				// add tree node to the root
+				DefaultMutableTreeNode node = new DefaultMutableTreeNode(tabTitle);
+				DefaultTreeModel treeModel = (DefaultTreeModel)jt.getModel();
+				DefaultMutableTreeNode root = (DefaultMutableTreeNode)treeModel.getRoot();
+				TreePath path = null;
+				int row = (path == null ? 0 : jt.getRowForPath(path));
+				path = jt.getNextMatch(tabTitle, row, Position.Bias.Forward);
+				if (path != null || file_map.containsKey(tabTitle)) {
+					JOptionPane.showMessageDialog(tabTitleFrame, "Error. Every FP panel's name must be unique", 
+							"Error", JOptionPane.ERROR_MESSAGE);
+					System.err.println("Cannot add another FP panel with the same name");
+					return;
+				}
+				root.add(node);
+				treeModel.reload();
+				// put into map
+				file_map.put(tabTitle, String.valueOf(saveObjectArray.size()));
+				// add to last position of saveObjectArray
+				tabPane.insertTab(tabTitle, null, panel, "", saveObjectArray.size());
+				tabPane.setSelectedIndex(saveObjectArray.size());
+//				tab_index++;
+				panel.setLayout(null);
+				// fp
+				functionPoint(panel);
+				// update ui
+				SwingUtilities.updateComponentTreeUI(frame);
+				tabTitleFrame.dispose();
+			}
+		});
+		
+//		tabTitle = " Function Points " + tab_index;
+		
+		// add tree node to the root
+//		DefaultMutableTreeNode node = new DefaultMutableTreeNode(tabTitle);
+//		DefaultTreeModel treeModel = (DefaultTreeModel)jt.getModel();
+//		DefaultMutableTreeNode root = (DefaultMutableTreeNode)treeModel.getRoot();
+//		TreePath path = null;
+//		int row = (path == null ? 0 : jt.getRowForPath(path));
+//		path = jt.getNextMatch(tabTitle, row, Position.Bias.Forward);
+//		if (path != null || file_map.containsKey(tabTitle)) {
+//			JOptionPane.showMessageDialog(frame, "Error. Every FP panel's name must be unique", 
+//					"Error", JOptionPane.ERROR_MESSAGE);
+//			System.err.println("Cannot add another FP panel with the same name");
+//			return;
+//		}
+//		root.add(node);
+//		treeModel.reload();
+//		// put into map
+//		file_map.put(tabTitle, String.valueOf(tab_index-1));
 		// add to last position of saveObjectArray
-		tabPane.insertTab(tabTitle, null, panel, "", saveObjectArray.size());
-		tabPane.setSelectedIndex(saveObjectArray.size());
-		tab_index++;
-
-		frame.getContentPane().add(tabPane, BorderLayout.CENTER);
-		frame.setVisible(true);
-		panel.setLayout(null);
-
-		// int index=tabPane.getSelectedIndex();
-		// System.out.println("Tab's name:" + tabPane.getTitleAt(index));
-
-		// labels
-		JLabel weightingFactors = new JLabel("Weighting Factors", JLabel.CENTER);
-		JLabel simple = new JLabel("Simple   Average   Complex", JLabel.CENTER);
-
-		// set bounds
-		weightingFactors.setBounds(0, 10, 800, 20);
-		simple.setBounds(0, 30, 800, 20);
-
-		// add to panel
-		panel.add(weightingFactors);
-		panel.add(simple);
-
-		functionPoint(panel);
+//		tabPane.insertTab(tabTitle, null, panel, "", saveObjectArray.size());
+//		tabPane.setSelectedIndex(saveObjectArray.size());
+//		tab_index++;
+//		frame.getContentPane().add(tabPane, BorderLayout.CENTER);
+//		panel.setLayout(null);
+//		// fp
+//		functionPoint(panel);
+//		// update ui
+//		SwingUtilities.updateComponentTreeUI(frame);
 	}
 
 	public void functionPoint(JPanel panel) {
+		// labels
+		JLabel weightingFactors = new JLabel("Weighting Factors", JLabel.CENTER);
+		JLabel simple = new JLabel("Simple   Average   Complex", JLabel.CENTER);
+		// set bounds
+		weightingFactors.setBounds(0, 10, 800, 20);
+		simple.setBounds(0, 30, 800, 20);
+		// add to panel
+		panel.add(weightingFactors);
+		panel.add(simple);
+		
 		id = new infomationDomain[5];
 		// objects
 		id[EI] = new infomationDomain(4);
@@ -210,6 +285,7 @@ public class FunctionPointItemListener implements ActionListener {
 		Button change_language_button = new Button("Change Language");
 		JLabel currentLanguage = new JLabel("Current Language");
 		JLabel totalCount = new JLabel("Total Count");
+		
 		JTextField total = new JTextField(2);
 		total.setEditable(false);
 		languageField.setEditable(false);
@@ -267,36 +343,7 @@ public class FunctionPointItemListener implements ActionListener {
 		CodeSizeField.setBounds(550, 280, 120, 20);
 
 		// add to panel
-		panel.add(id[EI].label);
-		panel.add(id[EO].label);
-		panel.add(id[EInq].label);
-		panel.add(id[ILF].label);
-		panel.add(id[EIF].label);
-		panel.add(id[EI].input);
-		panel.add(id[EO].input);
-		panel.add(id[EInq].input);
-		panel.add(id[ILF].input);
-		panel.add(id[EIF].input);
-		panel.add(id[EI].radioButtons[SIMPLE]);
-		panel.add(id[EI].radioButtons[AVERAGE]);
-		panel.add(id[EI].radioButtons[COMPLEX]);
-		panel.add(id[EO].radioButtons[SIMPLE]);
-		panel.add(id[EO].radioButtons[AVERAGE]);
-		panel.add(id[EO].radioButtons[COMPLEX]);
-		panel.add(id[EInq].radioButtons[SIMPLE]);
-		panel.add(id[EInq].radioButtons[AVERAGE]);
-		panel.add(id[EInq].radioButtons[COMPLEX]);
-		panel.add(id[ILF].radioButtons[SIMPLE]);
-		panel.add(id[ILF].radioButtons[AVERAGE]);
-		panel.add(id[ILF].radioButtons[COMPLEX]);
-		panel.add(id[EIF].radioButtons[SIMPLE]);
-		panel.add(id[EIF].radioButtons[AVERAGE]);
-		panel.add(id[EIF].radioButtons[COMPLEX]);
-		panel.add(id[EI].output);
-		panel.add(id[EO].output);
-		panel.add(id[EInq].output);
-		panel.add(id[ILF].output);
-		panel.add(id[EIF].output);
+		add_id_to_panel(panel,id);
 		panel.add(currentLanguage);
 		panel.add(compute_FP_button);
 		panel.add(VAF_button);
@@ -330,21 +377,56 @@ public class FunctionPointItemListener implements ActionListener {
 		// compute size
 		System.out.println("New Computse Size in FPItemListener");
 		ComputeSize sizeItem = new ComputeSize();
-		sizeItem.setFields(fp, CodeSizeField, saveObject, saveObjectArray);
+		sizeItem.setFields(fp, CodeSizeField, lastObject, saveObjectArray);
 		compute_code_size_button.addActionListener(sizeItem);
 
 		// save fields
-		saveObject.id = id;
-		saveObject.languageField = languageField;
-		saveObject.total = total;
-		saveObject.FPField = FPField;
-		saveObject.VAFField = VAFField;
-		saveObject.CodeSizeField = CodeSizeField;
-		saveObject.vaf_array = vaf_array;
-		saveObject.fp = fp;
-		saveObject.tabTitle = tabTitle;
+		lastObject.id = id;
+		lastObject.languageField = languageField;
+		lastObject.total = total;
+		lastObject.FPField = FPField;
+		lastObject.VAFField = VAFField;
+		lastObject.CodeSizeField = CodeSizeField;
+		lastObject.vaf_array = vaf_array;
+		lastObject.fp = fp;
+		lastObject.tabTitle = tabTitle;
 
 		// validate before opening smi tab
-		sl.setSaveObject(saveObject);
+		sl.setSaveObject(lastObject);
+		treePopup.lastObject=lastObject;
+//		treePopup.setSaveObject(saveObject);
+	}
+	// add id to panel
+	public void add_id_to_panel(JPanel panel, infomationDomain[] id) {
+		panel.add(id[EI].label);
+		panel.add(id[EO].label);
+		panel.add(id[EInq].label);
+		panel.add(id[ILF].label);
+		panel.add(id[EIF].label);
+		panel.add(id[EI].input);
+		panel.add(id[EO].input);
+		panel.add(id[EInq].input);
+		panel.add(id[ILF].input);
+		panel.add(id[EIF].input);
+		panel.add(id[EI].radioButtons[SIMPLE]);
+		panel.add(id[EI].radioButtons[AVERAGE]);
+		panel.add(id[EI].radioButtons[COMPLEX]);
+		panel.add(id[EO].radioButtons[SIMPLE]);
+		panel.add(id[EO].radioButtons[AVERAGE]);
+		panel.add(id[EO].radioButtons[COMPLEX]);
+		panel.add(id[EInq].radioButtons[SIMPLE]);
+		panel.add(id[EInq].radioButtons[AVERAGE]);
+		panel.add(id[EInq].radioButtons[COMPLEX]);
+		panel.add(id[ILF].radioButtons[SIMPLE]);
+		panel.add(id[ILF].radioButtons[AVERAGE]);
+		panel.add(id[ILF].radioButtons[COMPLEX]);
+		panel.add(id[EIF].radioButtons[SIMPLE]);
+		panel.add(id[EIF].radioButtons[AVERAGE]);
+		panel.add(id[EIF].radioButtons[COMPLEX]);
+		panel.add(id[EI].output);
+		panel.add(id[EO].output);
+		panel.add(id[EInq].output);
+		panel.add(id[ILF].output);
+		panel.add(id[EIF].output);
 	}
 }

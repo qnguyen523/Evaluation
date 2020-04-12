@@ -90,7 +90,7 @@ public class ComputeIndex implements ActionListener {
 		smi = x;
 		list.add(smi);
 		System.out.println("In ComputeIndex:\n" + list);
-		System.out.println(number_of_rows_when_opening);
-		System.out.println(number_of_rows_when_saving);
+//		System.out.println(number_of_rows_when_opening);
+//		System.out.println(number_of_rows_when_saving);
 	}
 }

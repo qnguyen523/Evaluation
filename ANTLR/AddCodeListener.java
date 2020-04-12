@@ -6,9 +6,15 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.lang.*;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.filechooser.*;
+import javax.swing.text.Position;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+
 import org.antlr.runtime.*;
 import org.antlr.runtime.RecognitionException;
 
@@ -19,27 +25,38 @@ public class AddCodeListener implements ActionListener {
 	public JFrame frame;
 	public JTabbedPane tabPane;
 	public JMenuItem statistics;
+	public JMenuItem add_code;
 	public ArrayList<String> file_names;
 	public ArrayList<String> names;
 	public SaveItemListener saveItem;
+	// project tree
+	JTree jt;
+	public Map<String, String> file_map;
+	
 	public class MyPanel {
-		JPanel panel;
-		JTextArea display;
-		JScrollPane sp;
+		public JPanel panel;
+		public JTextArea display;
+		public JScrollPane sp;
+		public StringBuilder sb;
 	}
 	public MyPanel[] my_panels;
 	public void setFields(JFrame frame,JTabbedPane tabPane,
-			ArrayList<String> file_names,SaveItemListener saveItem,JMenuItem statistics) {
+			ArrayList<String> file_names,SaveItemListener saveItem,
+			JMenuItem statistics,JTree jt,Map<String, String> file_map,
+			JMenuItem add_code) {
 		this.frame=frame;this.tabPane=tabPane;
 		this.file_names=file_names;this.saveItem=saveItem;
 		this.statistics=statistics;
+		this.jt=jt;
+		this.file_map=file_map;
+		this.add_code=add_code;
 	}
 	public void actionPerformed(ActionEvent e) {
 		names = new ArrayList<String>();
 //		file_names = new ArrayList<>();
 		File f = new File("/Users/Peter/Documents/workspace/Test-Antlr/");
 		JFileChooser inputFile=new JFileChooser(f);
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(".java", "txt", "java");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(".java", "java");
 		inputFile.setFileFilter(filter);
 		inputFile.setMultiSelectionEnabled(true);
 		// open file
@@ -49,21 +66,42 @@ public class AddCodeListener implements ActionListener {
 			File[] files = inputFile.getSelectedFiles();
 			my_panels = new MyPanel[files.length];
 			for (int i=0; i<my_panels.length; i++) {
+				// add tree node to the root
+				DefaultMutableTreeNode node = new DefaultMutableTreeNode(files[i].getName());
+				DefaultTreeModel model = (DefaultTreeModel)jt.getModel();
+				DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
+				TreePath path = null;
+				int row = (path == null ? 0 : jt.getRowForPath(path));
+				path = jt.getNextMatch(files[i].getName(), row, Position.Bias.Forward);
+				if (path != null || file_map.containsKey(files[i].getName())) {
+					JOptionPane.showMessageDialog(frame, "Error. Cannot add the same file", 
+							"Error", JOptionPane.ERROR_MESSAGE);
+					System.err.println("Cannot add the same file");
+					return;
+				}
+				root.add(node);
+				model.reload();
+				// parse 
+				if (file_map.containsKey(files[i].getName())) {
+					JOptionPane.showMessageDialog(frame, "Error. Cannot add the same file", 
+							"Error", JOptionPane.ERROR_MESSAGE);
+					System.err.println("Cannot add the same file");
+					return;
+				}
+				
 				my_panels[i] = new MyPanel();
 				my_panels[i].panel = new JPanel();
+				my_panels[i].sb = new StringBuilder();
 				names.add(files[i].getPath());
-				String msg = "File name: "+files[i].getName()+
-						"\nClick Project code statistics option for statistics";
-				my_panels[i].display = new JTextArea(msg,25,60);
-				my_panels[i].display.setEditable(false);
-				my_panels[i].sp = new JScrollPane(my_panels[i].display);
-				my_panels[i].sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-				my_panels[i].panel.add(my_panels[i].sp);
-				tabPane.addTab(files[i].getName(), my_panels[i].panel);
+				new Statistics().parse(files[i],my_panels[i].sb,my_panels[i],tabPane,true);
+				// put into map
+				String key = files[i].getName();
+				String value = files[i].getPath();
+				file_map.put(key, value);
 			}
 			
 			// add tabPane to frame
-			frame.getContentPane().add(tabPane, BorderLayout.CENTER);
+//			frame.getContentPane().add(tabPane, BorderLayout.CENTER);
 			frame.setVisible(true);
 			
 			// save
@@ -72,6 +110,10 @@ public class AddCodeListener implements ActionListener {
 			// trigger to show statistics
 			if (statistics.getActionListeners().length == 0)
 				statistics.addActionListener(new Statistics());
+			
+			// set enable
+			statistics.setEnabled(true);
+			add_code.setEnabled(false);
 		} else {
 			// Cancel button is clicked
 			System.err.println("Cancel button is clicked");
@@ -81,38 +123,43 @@ public class AddCodeListener implements ActionListener {
 
 	// inner class
 	public class Statistics implements ActionListener  {
+		public void parse(File file, StringBuilder sb, MyPanel mp, JTabbedPane tabPane, 
+				boolean isFirstOpened) {
+			try {
+				JavaJavaLexer lexer = new JavaJavaLexer(new ANTLRFileStream(file.getPath()));
+				CommonTokenStream tokens = new CommonTokenStream(lexer);
+				JavaJavaParser parser = new JavaJavaParser(tokens);
+				parser.compilationUnit();
+				file_stats(parser,lexer,file,sb);
+				halstead(parser,lexer,sb);
+				mccabe(parser,sb);
+				String msg = "File name: "+file.getName()+
+						"\nClick Project code statistics option for statistics";
+				mp.display = new JTextArea((isFirstOpened) ? msg : sb.toString(),25,50);
+				mp.display.setEditable(false);
+				mp.sp = new JScrollPane(mp.display);
+				mp.sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+				mp.panel.add(mp.sp);
+				tabPane.addTab(file.getName(), mp.panel);
+			} catch (IOException | RecognitionException e1) {
+				e1.printStackTrace();
+			}
+		}
 		public void actionPerformed(ActionEvent e) {
 			if (names == null || names.isEmpty()) {
 				System.err.println("Errors with file names");
 				return;
 			}
-			
 			// show statistics
 			for (int i=0; i<names.size(); i++) {
-				File file = new File(names.get(i));
-				StringBuilder sb = new StringBuilder();
-				try {
-					JavaJavaLexer lexer = new JavaJavaLexer(new ANTLRFileStream(names.get(i)));
-					CommonTokenStream tokens = new CommonTokenStream(lexer);
-					JavaJavaParser parser = new JavaJavaParser(tokens);
-					parser.compilationUnit();
-					file_stats(parser,lexer,file,sb);
-					halstead(parser,lexer,sb);
-					mccabe(parser,sb);
-				} catch (IOException | RecognitionException e1) {
-					e1.printStackTrace();
-				}
-				
-				// test output
-				System.out.println(sb);
-				
-				my_panels[i].display.setText(sb.toString());
+				my_panels[i].display.setText(my_panels[i].sb.toString());
 			}
 			
 			// save
 			System.out.println("file_names in AddCodeLis: "+names);
-//			saveItem.saving_list.file_names = file_names;
-//			saveItem.saving_list.file_names.addAll(file_names);
+			// set enable
+						statistics.setEnabled(false);
+						add_code.setEnabled(true);
 		}
 		public void file_stats(JavaJavaParser parser, JavaJavaLexer lexer, File file,StringBuilder sb) {
 			float percent_of_comments = (float) (lexer.line_of_comments * 100.0/lexer.line_of_code);
@@ -121,6 +168,9 @@ public class AddCodeListener implements ActionListener {
 			sb.append("File white space: "+lexer.ws+"\n");
 			sb.append("File comment space in bytes: "+(percent_of_comments*file.length()/100.0)+"\n");
 			sb.append("Comment percentage of file: "+percent_of_comments +"%"+"\n");
+			
+//			System.out.println("Line of code: "+lexer.line_of_code);
+//			System.out.println("Line of comments: "+lexer.line_of_comments);
 		}
 		public void mccabe(JavaJavaParser parser,StringBuilder sb) {
 			sb.append("\n\nMcCabe's Cyclomatic Complexity: "+"\n");

@@ -2,6 +2,8 @@ package SMI;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 /*
  * This class is to create new operation
@@ -12,14 +14,16 @@ public class NewItemListener implements ActionListener {
 	JFrame frame;
 	ProjectInfoModel projectInfo;
 	public JMenu metrics, project_code;
-	
+	JTree jt;
 
 	// set member fields
-	public void setFields(JFrame frame, ProjectInfoModel projectInfo,JMenu metrics,JMenu project_code) {
+	public void setFields(JFrame frame, ProjectInfoModel projectInfo,JMenu metrics,JMenu project_code,
+			JTree jt) {
 		this.frame = frame;
 		this.projectInfo = projectInfo;
 		this.metrics = metrics;
 		this.project_code=project_code;
+		this.jt=jt;
 	}
 
 	// when new button is clicked
@@ -74,6 +78,7 @@ public class NewItemListener implements ActionListener {
 					JOptionPane.showMessageDialog(newProjectFrame,
 							"The project name cannot be empty. Please input project name!", "Error",
 							JOptionPane.ERROR_MESSAGE);
+					return;
 				} else {
 					String title = newProject.getText() + " - " + projectNameField;
 					frame.setTitle(title);
@@ -82,6 +87,12 @@ public class NewItemListener implements ActionListener {
 					// enable
 					metrics.setEnabled(true);
 					project_code.setEnabled(true);
+					
+					// set name to root
+					DefaultTreeModel model = (DefaultTreeModel)jt.getModel();
+					DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
+					root.setUserObject(projectNameField);
+					model.reload();
 				}
 				// close
 				newProjectFrame.dispose();
