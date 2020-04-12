@@ -62,6 +62,7 @@ public class AddCodeListener implements ActionListener {
 		// open file
 		if(inputFile.showOpenDialog(frame)==JFileChooser.APPROVE_OPTION)
 		{
+			
 			// create panels
 			File[] files = inputFile.getSelectedFiles();
 			my_panels = new MyPanel[files.length];
@@ -79,6 +80,10 @@ public class AddCodeListener implements ActionListener {
 					System.err.println("Cannot add the same file");
 					return;
 				}
+				// set enable
+				statistics.setEnabled(true);
+				add_code.setEnabled(false);
+				
 				root.add(node);
 				model.reload();
 				// parse 
@@ -110,10 +115,6 @@ public class AddCodeListener implements ActionListener {
 			// trigger to show statistics
 			if (statistics.getActionListeners().length == 0)
 				statistics.addActionListener(new Statistics());
-			
-			// set enable
-			statistics.setEnabled(true);
-			add_code.setEnabled(false);
 		} else {
 			// Cancel button is clicked
 			System.err.println("Cancel button is clicked");
@@ -181,31 +182,32 @@ public class AddCodeListener implements ActionListener {
 			int n1,n2,N1,N2,N,n;
 			float V,D,E,T,B;
 			n1 = parser.JavaMetrics.uniqueSpecial.size() + parser.JavaMetrics.uniqueKeywords.size();
-			n2 = parser.JavaMetrics.uniqueIdentifiers.size() + parser.JavaMetrics.uIDSym.size()
-					+ parser.JavaMetrics.uniqueConstants.size();
+			n2 = parser.JavaMetrics.uniqueIdentifiers.size() 
+			+ parser.JavaMetrics.uniqueConstants.size();
 			N1 = parser.specialcount + parser.keywordCount;
 			N2 = parser.identcount + lexer.constantcount;
 			N = N1 + N2;
 			n = n1 + n2;
-			V = (float) (N* (Math.log(N) / Math.log(2)));
-			D = (float) ((n1/2.0) * (n2/2.0));
+			
+			V = (float) (N* Math.round(Math.log(n) / Math.log(2)));
+			D = (float) ((n1/2.0) * (N2/n2));
 			E = (float) (D * V);
 			T = (float) (E/18.0);
 			B = (float) (V/3000.0);
 			sb.append("Halstead:"+"\n");
-			sb.append("\t"+"Unique operators: " + n1+"\n");
-			sb.append("\t"+"Unique operands: " + n2+"\n");
-			sb.append("\t"+"Total operators: " + N1+"\n");
-			sb.append("\t"+"Total operands: " + N2+"\n");
-			sb.append("\t"+"Program length (N) = " + N+"\n");
-			sb.append("\t"+"Program vocabulary (n) = " + n+"\n");
-			sb.append("\t"+"Volume = " + V+"\n");
-			sb.append("\t"+"Difficulty = " + D+"\n");
-			sb.append("\t"+"Effort = " + E+"\n");
+			sb.append("\tUnique operators: " + n1+"\n");
+			sb.append("\tUnique operands: " + n2+"\n");
+			sb.append("\tTotal operators: " + N1+"\n");
+			sb.append("\tTotal operands: " + N2+"\n");
+			sb.append("\tProgram length (N) = " + N+"\n");
+			sb.append("\tProgram vocabulary (n) = " + n+"\n");
+			sb.append("\tVolume = " + V+"\n");
+			sb.append("\tDifficulty = " + D+"\n");
+			sb.append("\tEffort = " + E+"\n");
 			String hold = String.format("\tTime = %.3f sec (%.3f mins or %.3f hrs or %.3f person-months)\n",
 					T,T/60.0,T/(60.0*60.0),T/(60.0*60.0*140.0));
 			sb.append(hold);
-			sb.append("\t"+"Bugs expected = " + B+"\n");
+			sb.append("\tBugs expected = " + B+"\n");
 		}
 	}
 }
