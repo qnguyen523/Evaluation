@@ -125,7 +125,7 @@ public class JavaJavaLexer extends Lexer {
     	public int line_count = 0;
     	public int line_of_comments = 0;
     	public int constantcount = 0;
-    	public int line_of_code=1;
+    	public int line_of_code=0;
     	//public int keywordCount = 0;
      // protected boolean enumIsKeyword = true;
       //protected boolean assertIsKeyword = true;
@@ -3719,7 +3719,7 @@ public class JavaJavaLexer extends Lexer {
 
 
 
-            _channel=HIDDEN; line_of_comments++; line_of_code++;
+            _channel=HIDDEN; line_of_comments++; //line_of_code++;
 
             }
 
@@ -3801,7 +3801,7 @@ public class JavaJavaLexer extends Lexer {
 
             match('\n'); 
 
-            _channel=HIDDEN; line_of_code++;
+            _channel=HIDDEN; //line_of_code++;
 
             }
 
