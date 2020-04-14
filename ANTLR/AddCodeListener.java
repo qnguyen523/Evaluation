@@ -66,31 +66,43 @@ public class AddCodeListener implements ActionListener {
 			// create panels
 			File[] files = inputFile.getSelectedFiles();
 			my_panels = new MyPanel[files.length];
+			// validate
+			DefaultMutableTreeNode node;
+			DefaultTreeModel model = (DefaultTreeModel)jt.getModel();
+			DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
 			for (int i=0; i<my_panels.length; i++) {
-				// add tree node to the root
-				DefaultMutableTreeNode node = new DefaultMutableTreeNode(files[i].getName());
-				DefaultTreeModel model = (DefaultTreeModel)jt.getModel();
-				DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
+				node = new DefaultMutableTreeNode(files[i].getName());
 				TreePath path = null;
-				int row = (path == null ? 0 : jt.getRowForPath(path));
-				path = jt.getNextMatch(files[i].getName(), row, Position.Bias.Forward);
 				if (path != null || file_map.containsKey(files[i].getName())) {
 					JOptionPane.showMessageDialog(frame, "Error. Cannot add the same file", 
 							"Error", JOptionPane.ERROR_MESSAGE);
 					System.err.println("Cannot add the same file");
 					return;
 				}
-				// set enable
-				statistics.setEnabled(true);
-				add_code.setEnabled(false);
-				
+			}
+			
+			for (int i=0; i<my_panels.length; i++) {
+				// add tree node to the root
+//				DefaultMutableTreeNode node = new DefaultMutableTreeNode(files[i].getName());
+//				DefaultTreeModel model = (DefaultTreeModel)jt.getModel();
+//				DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
+//				TreePath path = null;
+//				int row = (path == null ? 0 : jt.getRowForPath(path));
+//				path = jt.getNextMatch(files[i].getName(), row, Position.Bias.Forward);
+//				if (path != null || file_map.containsKey(files[i].getName())) {
+//					JOptionPane.showMessageDialog(frame, "Error. Cannot add the same file", 
+//							"Error", JOptionPane.ERROR_MESSAGE);
+//					System.err.println("Cannot add the same file");
+//					return;
+//				}
+				node = new DefaultMutableTreeNode(files[i].getName());
 				root.add(node);
 				model.reload();
 				// parse 
 				if (file_map.containsKey(files[i].getName())) {
-					JOptionPane.showMessageDialog(frame, "Error. Cannot add the same file", 
+					JOptionPane.showMessageDialog(frame, "Error. Cannot parse the same file", 
 							"Error", JOptionPane.ERROR_MESSAGE);
-					System.err.println("Cannot add the same file");
+					System.err.println("Cannot parse the same file");
 					return;
 				}
 				
@@ -98,7 +110,9 @@ public class AddCodeListener implements ActionListener {
 				my_panels[i].panel = new JPanel();
 				my_panels[i].sb = new StringBuilder();
 				names.add(files[i].getPath());
-				new Statistics().parse(files[i],my_panels[i].sb,my_panels[i],tabPane,true);
+				
+				new Statistics().parse(files[i],my_panels[i].sb,my_panels[i],tabPane,true,tabPane.getTabCount());
+				
 				// put into map
 				String key = files[i].getName();
 				String value = files[i].getPath();
@@ -115,6 +129,9 @@ public class AddCodeListener implements ActionListener {
 			// trigger to show statistics
 			if (statistics.getActionListeners().length == 0)
 				statistics.addActionListener(new Statistics());
+			// set enable
+			statistics.setEnabled(true);
+			add_code.setEnabled(false);
 		} else {
 			// Cancel button is clicked
 			System.err.println("Cancel button is clicked");
@@ -125,7 +142,7 @@ public class AddCodeListener implements ActionListener {
 	// inner class
 	public class Statistics implements ActionListener  {
 		public void parse(File file, StringBuilder sb, MyPanel mp, JTabbedPane tabPane, 
-				boolean isFirstOpened) {
+				boolean isFirstOpened, int atIndex) {
 			try {
 				JavaJavaLexer lexer = new JavaJavaLexer(new ANTLRFileStream(file.getPath()));
 				CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -141,7 +158,11 @@ public class AddCodeListener implements ActionListener {
 				mp.sp = new JScrollPane(mp.display);
 				mp.sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 				mp.panel.add(mp.sp);
-				tabPane.addTab(file.getName(), mp.panel);
+				
+//				tabPane.addTab(file.getName(), mp.panel);
+				tabPane.insertTab(file.getName(), null, mp.panel, "", atIndex);
+				tabPane.setSelectedIndex(atIndex);
+				
 			} catch (IOException | RecognitionException e1) {
 				e1.printStackTrace();
 			}

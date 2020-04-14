@@ -16,12 +16,12 @@ public class ExitItemListener implements ActionListener {
 		this.open = open;
 	}
 
-	// when exit button is clicked, close the frame
+	// when Exit option is clicked, close the frame
 	public void actionPerformed(ActionEvent e) {
 		System.out.println("In ExitItemL: " + this.open.isOpen);
-		WindowListener[] a = frame.getWindowListeners();
-		WindowListener w = a[0];
-		w.windowClosing(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-		// frame.dispose();
+//		WindowListener[] a = frame.getWindowListeners();
+//		WindowListener w = a[0];
+//		w.windowClosing(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+		 frame.dispose();
 	}
 }

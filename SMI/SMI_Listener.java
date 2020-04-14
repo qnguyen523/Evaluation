@@ -30,9 +30,10 @@ public class SMI_Listener implements ActionListener {
 	SaveModel lastObject;
 	NumberOfRows number_of_rows_when_opening;
 	NumberOfRows number_of_rows_when_saving;
-
+	
 	JTree jt;
 	TreePopup treePopup;
+	ArrayList<SaveModel> saveObjectArray;
 	// exit
 	public void setTable(JTable table, DefaultTableModel model) {
 		this.table = table;
@@ -52,7 +53,7 @@ public class SMI_Listener implements ActionListener {
 	public void setFields(JFrame frame, JTabbedPane tabPane, ArrayList<SMI> SMI_list,
 			Map<String, String> file_map, SaveItemListener saveItem,
 			DefaultTableModel model, JTable table, JPanel panel, JScrollPane sp,
-			ProjectInfoModel projectInfo,JTree jt,TreePopup treePopup) {
+			ProjectInfoModel projectInfo,JTree jt,TreePopup treePopup,ArrayList<SaveModel> saveObjectArray) {
 		this.frame = frame;
 		this.tabPane = tabPane;
 		this.saveItem = saveItem;
@@ -69,6 +70,7 @@ public class SMI_Listener implements ActionListener {
 		this.projectInfo = projectInfo;
 		this.jt=jt;
 		this.treePopup=treePopup;
+		this.saveObjectArray=saveObjectArray;
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -130,12 +132,20 @@ public class SMI_Listener implements ActionListener {
 			System.err.println("Cannot add another SMI panel");
 			return;
 		}
-		root.add(node);
+		treeModel.insertNodeInto(node, root, saveObjectArray.size());
 		treeModel.reload();
+//		root.add(node);
+//		treeModel.reload();
 		// smi panel
 		panel = new JPanel();
 		panel.setLayout(null);
-		tabPane.addTab("SMI", panel);
+		
+		int atIndex = (tabPane.getTabCount() < saveObjectArray.size()) ? 
+				tabPane.getTabCount():saveObjectArray.size();
+		tabPane.insertTab("SMI", null, panel, "", atIndex);
+		tabPane.setSelectedIndex(atIndex);
+		
+//		tabPane.addTab("SMI", panel);
 //		frame.getContentPane().add(tabPane, BorderLayout.CENTER);
 		panel.setBorder(
 				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Software Maturity Index"));

@@ -169,7 +169,11 @@ public class OpenItemListener implements ActionListener {
 				ci.list = temp_saving_list.SMI_list;
 				treePopup.popup_saving_list = temp_saving_list;
 				fpItem.file_map = temp_saving_list.file_map;
+				
 				sl.file_map = temp_saving_list.file_map;
+				sl.saveObjectArray = temp_saving_list.saveObjectArray;
+				sl.SMI_list = temp_saving_list.SMI_list;
+				
 				add_code_listener.file_map = temp_saving_list.file_map;
 				add_code_listener.file_names = temp_saving_list.file_names;
 				
@@ -189,20 +193,30 @@ public class OpenItemListener implements ActionListener {
 				c.printStackTrace();
 				return;
 			}
-
+//			// add nodes to root
+//			DefaultMutableTreeNode node;
+//			DefaultTreeModel treeModel = (DefaultTreeModel)jt.getModel();
+//			DefaultMutableTreeNode root = (DefaultMutableTreeNode)treeModel.getRoot();
+//			for (String s:saving_list.file_map.keySet()) {
+//				node = new DefaultMutableTreeNode(s);
+//				root.add(node);
+//			}
+//			treeModel.reload();
 			// take care of fp panels
-			saveObjectArray = new ArrayList<SaveModel>();
-			saveObjectArray = (ArrayList<SaveModel>) saving_list.saveObjectArray.clone();
+//			saveObjectArray = new ArrayList<SaveModel>();
+//			saveObjectArray = (ArrayList<SaveModel>) saving_list.saveObjectArray.clone();
 //			System.out.println("In OpenItem " + saveObjectArray);
 //			System.out.println(this.saving_list.saveObjectArray);
+			saveObjectArray = saving_list.saveObjectArray;
 			if (saveObjectArray == null) {
 				System.out.println("Error with saveObjectArray");
 				return;
 			}
-			for (SaveModel i : saving_list.saveObjectArray) {
-				functionPoint(i,tabPane);
+			
+			for (int i=0; i<saveObjectArray.size();i++) {
+				functionPoint(saveObjectArray.get(i),tabPane,i);
 				// add node to root
-				DefaultMutableTreeNode node = new DefaultMutableTreeNode(i.tabTitle);
+				DefaultMutableTreeNode node = new DefaultMutableTreeNode(saveObjectArray.get(i).tabTitle);
 				DefaultTreeModel treeModel = (DefaultTreeModel)jt.getModel();
 				DefaultMutableTreeNode root = (DefaultMutableTreeNode)treeModel.getRoot();
 				root.add(node);
@@ -285,7 +299,7 @@ public class OpenItemListener implements ActionListener {
 					my_panels[i] = add_code_listener.new MyPanel();
 					my_panels[i].panel = new JPanel();
 					my_panels[i].sb = new StringBuilder();
-					add_code_listener.new Statistics().parse(F,my_panels[i].sb,my_panels[i],tabPane,false);
+					add_code_listener.new Statistics().parse(F,my_panels[i].sb,my_panels[i],tabPane,false,tabPane.getTabCount());
 					// add node to root
 					DefaultMutableTreeNode node = new DefaultMutableTreeNode(F.getName());
 					DefaultTreeModel treeModel = (DefaultTreeModel)jt.getModel();
@@ -309,9 +323,13 @@ public class OpenItemListener implements ActionListener {
 		}
 	}
 	// take care of SMI
-	public void smi(ArrayList<SMI> SMI_list, JTabbedPane tabPane) {
+	public void smi(ArrayList<SMI> SMI_list, JTabbedPane tabPane, int atIndex) {
 		JPanel panel = new JPanel();
-		tabPane.addTab("SMI", panel);
+		
+//		tabPane.addTab("SMI", panel);
+		tabPane.insertTab("SMI", null, panel, "", atIndex);
+		tabPane.setSelectedIndex(atIndex);
+		
 		String[] header = { "SMI", "SMI Added", "SMI Changed", "SMI Deleted", "Total Modules" };
 		String[][] rec = {};
 		panel.setBorder(
@@ -368,13 +386,17 @@ public class OpenItemListener implements ActionListener {
 	}
 
 	// take care of function point
-	public void functionPoint(SaveModel saveObject,JTabbedPane tabPane) {
+	public void functionPoint(SaveModel saveObject,JTabbedPane tabPane,int atIndex) {
 		 
 		
 		// add a new tab to current panel
 		JPanel panel = new JPanel();
 		// have title
-		tabPane.addTab(saveObject.tabTitle, panel);
+//		tabPane.addTab(saveObject.tabTitle, panel);
+		
+		tabPane.insertTab(saveObject.tabTitle, null, panel, "", atIndex);
+		tabPane.setSelectedIndex(atIndex);
+		
 //		frame.getContentPane().add(tabPane, BorderLayout.CENTER);
 		panel.setLayout(null);
 		// labels

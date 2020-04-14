@@ -234,7 +234,7 @@ public class MenuControl {
 		// add ActionListener for smi
 		sl.setFields(frame, tabPane, saving_list.SMI_list,saving_list.file_map, 
 				saveItem, model, table, panel, sp,
-				saving_list.projectInfo,jt,treePopup);
+				saving_list.projectInfo,jt,treePopup,saving_list.saveObjectArray);
 		sl.SetNumberOfRows(number_of_rows_when_opening, number_of_rows_when_saving);
 		smi_item.addActionListener(sl);
 		openItem.set_SMI_Listener(sl);
@@ -249,6 +249,14 @@ public class MenuControl {
 		tabPane.setBounds(200,0,700,550);
 		frame.add(tree_sp);
 		frame.add(tabPane);
+		
+//		 // create a splitpane 
+//		JScrollPane tabPane_sp = new JScrollPane(tabPane);
+//        JSplitPane splitPane = new JSplitPane(SwingConstants.VERTICAL, tree_sp, tabPane_sp); 
+//        splitPane.setBounds(0,0,915,550);
+//        splitPane.setDividerLocation(170);
+//        splitPane.setOrientation(SwingConstants.VERTICAL); 
+//        frame.add(splitPane); 
 		
 		frame.setJMenuBar(menuBar);
 		frame.setSize(920, 600);
@@ -268,18 +276,21 @@ public class MenuControl {
 
 				if (open.isOpen) {
 					saving_list.SMI_list = openItem.SMI_list;
-					saving_list.saveObjectArray = openItem.fpItem.saveObjectArray;
+//					saving_list.saveObjectArray = openItem.fpItem.saveObjectArray;
+					saving_list.saveObjectArray = openItem.saveObjectArray;
 					saving_list.projectInfo = openItem.projectInfo;
 					model = openItem.model;
-					saving_list.file_names = openItem.file_names;
+					saving_list.file_names = openItem.file_names; //fpItem.file_map
+					saving_list.file_map = openItem.saving_list.file_map;
 				}
 
-//				System.out.println("Closing in MenuControl:");
-//				System.out.println(saving_list.SMI_list);
-//				System.out.println(saving_list.saveObjectArray);
-//				System.out.println(saving_list.file_names);
-//				System.out.println(model.getRowCount());
-//				System.out.println(number_of_rows_when_opening + " " + number_of_rows_when_saving);
+				System.out.println("Closing in MenuControl:");
+				System.out.println(saving_list.SMI_list);
+				System.out.println(saving_list.saveObjectArray);
+				System.out.println(saving_list.file_names);
+				System.err.println(saving_list.file_map);
+				System.out.println(model.getRowCount());
+				System.out.println(number_of_rows_when_opening + " " + number_of_rows_when_saving);
 				// exit from MenuControl
 				if (model.getRowCount() == 0 && number_of_rows_when_opening.num == 0
 						&& number_of_rows_when_saving.num == 0) {
@@ -294,6 +305,8 @@ public class MenuControl {
 					System.exit(1);
 				}
 				// exit from OpenItemListener
+				model = sl.model;
+				System.out.println(model.getRowCount());
 				if (model.getRowCount() == 0) {
 					System.err.println("Error with model in MenuControl");
 					return;
@@ -318,8 +331,8 @@ public class MenuControl {
 					// save
 					try {
 						FileOutputStream fileOut = new FileOutputStream(fileName);
-						System.out.println(saving_list.saveObjectArray);
-						System.out.println(saving_list.SMI_list);
+//						System.out.println(saving_list.saveObjectArray);
+//						System.out.println(saving_list.SMI_list);
 						ObjectOutputStream out = new ObjectOutputStream(fileOut);
 						
 						// save active panel's index
@@ -386,15 +399,21 @@ public class MenuControl {
 								return;
 							}
 							System.err.println(popup_saving_list.saveObjectArray.get(index));
-							new OpenItemListener().functionPoint(popup_saving_list.saveObjectArray.get(index),
-									tabPane);
+							// never out of range
+							int atIndex = (tabPane.getTabCount() < row-1) ? tabPane.getTabCount() : row-1;
+							System.err.println(atIndex);
+							openItem.functionPoint(popup_saving_list.saveObjectArray.get(index),
+									tabPane,atIndex);
 							return;
 						}
 						// if the file is SMI panel
 						if(tabTitle.equals("SMI")) {
 //							System.err.println("Open SMI");
-//							System.err.println(saving_list.SMI_list);;
-							openItem.smi(popup_saving_list.SMI_list,tabPane);
+//							System.err.println(saving_list.SMI_list);
+							// never out of range
+							int atIndex = (tabPane.getTabCount() < row-1) ? 0 : row-1;
+							System.err.println(atIndex);
+							openItem.smi(popup_saving_list.SMI_list,tabPane,atIndex);
 							SwingUtilities.updateComponentTreeUI(frame);
 							return;
 						}
@@ -404,7 +423,11 @@ public class MenuControl {
 						my_panel.panel = new JPanel();
 						StringBuilder sb = new StringBuilder();
 						File file = new File(popup_saving_list.file_map.get(tabTitle));
-						new AddCodeListener().new Statistics().parse(file,sb,my_panel,tabPane,false);
+//						System.err.println("Row: "+row);
+						// never out of range
+						int atIndex = (tabPane.getTabCount() < row-1) ? tabPane.getTabCount() : row-1;
+						System.err.println(atIndex);
+						new AddCodeListener().new Statistics().parse(file,sb,my_panel,tabPane,false,atIndex);
 					}
 				});
 				close.addActionListener(new ActionListener() {
@@ -465,11 +488,13 @@ public class MenuControl {
 							// store
 							sl.SMI_list = popup_saving_list.SMI_list;
 							sl.file_map = popup_saving_list.file_map;
-							
+							sl.saveObjectArray = popup_saving_list.saveObjectArray;
 							
 							model.setRowCount(0);
 							sl.model.setRowCount(0);
 							sl.setTable(table, model);
+							saveItem.table = table;
+							saveItem.model = model;
 							
 							number_of_rows_when_opening.num=number_of_rows_when_saving.num=0;
 						}
@@ -483,8 +508,8 @@ public class MenuControl {
 						DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
 						model.removeNodeFromParent((MutableTreeNode)path.getLastPathComponent());
 						// remove from map and array list
+						System.out.println(popup_saving_list.file_names.remove(popup_saving_list.file_map.get(tabTitle)));
 						System.out.println(popup_saving_list.file_map.remove(tabTitle));
-						System.out.println(popup_saving_list.file_names.remove(tabTitle));
 					}
 				});
 				

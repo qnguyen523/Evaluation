@@ -151,13 +151,16 @@ public class FunctionPointItemListener implements ActionListener {
 					System.err.println("Cannot add another FP panel with the same name");
 					return;
 				}
-				root.add(node);
+				treeModel.insertNodeInto(node, root, saveObjectArray.size());
+//				root.add(node);
 				treeModel.reload();
 				// put into map
 				file_map.put(tabTitle, String.valueOf(saveObjectArray.size()));
 				// add to last position of saveObjectArray
-				tabPane.insertTab(tabTitle, null, panel, "", saveObjectArray.size());
-				tabPane.setSelectedIndex(saveObjectArray.size());
+				int atIndex = (tabPane.getTabCount() < saveObjectArray.size()) ? 
+						tabPane.getTabCount():saveObjectArray.size();
+				tabPane.insertTab(tabTitle, null, panel, "", atIndex);
+				tabPane.setSelectedIndex(atIndex);
 //				tab_index++;
 				panel.setLayout(null);
 				// fp
