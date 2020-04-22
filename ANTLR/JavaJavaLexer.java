@@ -3768,6 +3768,7 @@ public class JavaJavaLexer extends Lexer {
             	        throw mse;
             	    }
 
+            	    commentcount++;
 
             	    }
             	    break;

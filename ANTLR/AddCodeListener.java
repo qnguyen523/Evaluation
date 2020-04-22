@@ -54,7 +54,7 @@ public class AddCodeListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		names = new ArrayList<String>();
 //		file_names = new ArrayList<>();
-		File f = new File("/Users/Peter/Documents/workspace/Test-Antlr/");
+		File f = new File("/Users/Peter/Documents/workspace2/Metrics-Suite/");
 		JFileChooser inputFile=new JFileChooser(f);
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(".java", "java");
 		inputFile.setFileFilter(filter);
@@ -184,15 +184,17 @@ public class AddCodeListener implements ActionListener {
 						add_code.setEnabled(true);
 		}
 		public void file_stats(JavaJavaParser parser, JavaJavaLexer lexer, File file,StringBuilder sb) {
-			float percent_of_comments = (float) (lexer.line_of_comments * 100.0/lexer.line_of_code);
+			float percent_of_comments = (float) (lexer.commentcount * 100.0/file.length());
+			percent_of_comments = (float)Math.round(percent_of_comments * 1000) / 1000;
 			sb.append("File name: "+file.getName()+"\n");
 			sb.append("File length in bytes: "+ file.length()+"\n");
 			sb.append("File white space: "+lexer.ws+"\n");
-			sb.append("File comment space in bytes: "+(percent_of_comments*file.length()/100.0)+"\n");
-			sb.append("Comment percentage of file: "+percent_of_comments +"%"+"\n");
+			sb.append("File comment space in bytes: "+lexer.commentcount+"\n");
+//			String hold = String.format("Comment percentage of file: %.3f \n", percent_of_comments);
+			sb.append("Comment percentage of file: "+percent_of_comments+"%\n");
 			
 //			System.out.println("Line of code: "+lexer.line_of_code);
-//			System.out.println("Line of comments: "+lexer.line_of_comments);
+			System.err.println("comment count: "+lexer.commentcount);
 		}
 		public void mccabe(JavaJavaParser parser,StringBuilder sb) {
 			sb.append("\n\nMcCabe's Cyclomatic Complexity: "+"\n");
