@@ -3680,10 +3680,11 @@ public class JavaJavaLexer extends Lexer {
             do {
                 int alt27=2;
                 int LA27_0 = input.LA(1);
+                
 
                 if ( (LA27_0=='*') ) {
                     int LA27_1 = input.LA(2);
-
+                    
                     if ( (LA27_1=='/') ) {
                         alt27=2;
                     }
@@ -3697,7 +3698,6 @@ public class JavaJavaLexer extends Lexer {
                     alt27=1;
                 }
 
-
                 switch (alt27) {
             	case 1 :
             	    // /Users/Peter/Documents/workspace2/Metrics-Suite/ANTLR/JavaJava.g:947:42: .
@@ -3705,7 +3705,7 @@ public class JavaJavaLexer extends Lexer {
             	    matchAny(); 
 
             	    commentcount++;
-
+//            	    System.err.print((char)LA27_0);
             	    }
             	    break;
 
@@ -3713,7 +3713,7 @@ public class JavaJavaLexer extends Lexer {
             	    break loop27;
                 }
             } while (true);
-
+//            System.out.println();
 
             match("*/"); 
 
@@ -3761,6 +3761,7 @@ public class JavaJavaLexer extends Lexer {
             	    {
             	    if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '\t')||(input.LA(1) >= '\u000B' && input.LA(1) <= '\f')||(input.LA(1) >= '\u000E' && input.LA(1) <= '\uFFFF') ) {
             	        input.consume();
+            	        
             	    }
             	    else {
             	        MismatchedSetException mse = new MismatchedSetException(null,input);
@@ -3769,7 +3770,7 @@ public class JavaJavaLexer extends Lexer {
             	    }
 
             	    commentcount++;
-
+//            	    System.err.print((char)LA28_0);
             	    }
             	    break;
 
@@ -3777,7 +3778,8 @@ public class JavaJavaLexer extends Lexer {
             	    break loop28;
                 }
             } while (true);
-
+//            System.out.println();
+            
 
             line_of_comments++;
 
@@ -3793,13 +3795,14 @@ public class JavaJavaLexer extends Lexer {
                     // /Users/Peter/Documents/workspace2/Metrics-Suite/ANTLR/JavaJava.g:951:52: '\\r'
                     {
                     match('\r'); 
-
+                    
                     }
                     break;
 
             }
 
 
+            
             match('\n'); 
 
             _channel=HIDDEN; //line_of_code++;

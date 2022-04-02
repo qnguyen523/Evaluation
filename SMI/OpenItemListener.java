@@ -117,7 +117,8 @@ public class OpenItemListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		// for testing purpose
-		File f = new File("/Users/Peter/Documents/workspace2/Metrics-Suite/");
+		
+		File f = new File("/Users/Peter/Documents/workspace2/Metrics-Suite");
 		// File f = new File("/");
 
 		JFileChooser inputFile = new JFileChooser(f);

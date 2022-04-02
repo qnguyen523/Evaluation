@@ -156,7 +156,7 @@ public TreeAdaptor getTreeAdaptor() {
     return adaptor;
 }
     public String[] getTokenNames() { return JavaJavaParser.tokenNames; }
-    public String getGrammarFileName() { return "/Users/Peter/Documents/workspace2/Metrics-Suite/ANTLR/JavaJava.g"; }
+    public String getGrammarFileName() { return "/Users/Peter/Documents/Java/workspace/Metrics-Suite/ANTLR/JavaJava.g"; }
 
 
         JJavaMetrics JavaMetrics = new JJavaMetrics();
@@ -4248,7 +4248,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, Identifier116_tree);
             }
 
-            if ( state.backtracking==0 ) { System.out.println("Method=" + (Identifier116!=null?Identifier116.getText():null)); 
+            if ( state.backtracking==0 ) { //System.out.println("Method=" + (Identifier116!=null?Identifier116.getText():null)); 
                                  inMethod = true;
                                  methodName = (Identifier116!=null?Identifier116.getText():null);
                                 // if(primitive){
@@ -5040,7 +5040,7 @@ public TreeAdaptor getTreeAdaptor() {
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) adaptor.addChild(root_0, methodBody141.getTree());
 
-                    if ( state.backtracking==0 ) {System.out.println("MCC: "+ (mmc+1));}
+                    if ( state.backtracking==0 ) {/*System.out.println("MCC: "+ (mmc+1));*/}
 
                     }
                     break;
@@ -8804,7 +8804,7 @@ public TreeAdaptor getTreeAdaptor() {
                 		System.err.println("Error: "+methodName+" is already computed");
                 	}*/
                 	//McCabe_List.add(methodName +" = "+(mmc+1));
-                	System.out.println("McCabe for " + methodName + " = " + (mmc+1)); 
+                	//System.out.println("McCabe for " + methodName + " = " + (mmc+1)); 
                 	JavaMetrics.mccabeValues.add(methodName + " = " + (mmc+1));mmc = 0;
                 }
 
@@ -9154,7 +9154,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, char_literal256_tree);
             }
 
-            if ( state.backtracking==0 ) {s("}");System.out.println("McCabe for " + methodName + " = " + (mmc+1)); JavaMetrics.mccabeValues.add(methodName + " = " + (mmc+1)); mmc = 0;}
+            if ( state.backtracking==0 ) {s("}");/*System.out.println("McCabe for " + methodName + " = " + (mmc+1));*/ JavaMetrics.mccabeValues.add(methodName + " = " + (mmc+1)); mmc = 0;}
 
             }
 
@@ -13577,7 +13577,7 @@ public TreeAdaptor getTreeAdaptor() {
                     adaptor.addChild(root_0, string_literal391_tree);
                     }
 
-                    if ( state.backtracking==0 ) {keywordCount++;JavaMetrics.uniqueKeywords.add("break"); System.out.println("FOUND BREAK");}
+                    if ( state.backtracking==0 ) {keywordCount++;JavaMetrics.uniqueKeywords.add("break"); /*System.out.println("FOUND BREAK");*/}
 
                     // /Users/Peter/Documents/workspace2/Metrics-Suite/ANTLR/JavaJava.g:565:109: ( Identifier )?
                     int alt117=2;

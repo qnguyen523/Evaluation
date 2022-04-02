@@ -190,11 +190,9 @@ public class AddCodeListener implements ActionListener {
 			sb.append("File length in bytes: "+ file.length()+"\n");
 			sb.append("File white space: "+lexer.ws+"\n");
 			sb.append("File comment space in bytes: "+lexer.commentcount+"\n");
-//			String hold = String.format("Comment percentage of file: %.3f \n", percent_of_comments);
 			sb.append("Comment percentage of file: "+percent_of_comments+"%\n");
 			
-//			System.out.println("Line of code: "+lexer.line_of_code);
-			System.err.println("comment count: "+lexer.commentcount);
+			System.out.println("comment count: "+lexer.commentcount);
 		}
 		public void mccabe(JavaJavaParser parser,StringBuilder sb) {
 			sb.append("\n\nMcCabe's Cyclomatic Complexity: "+"\n");

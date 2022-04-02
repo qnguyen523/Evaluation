@@ -1,4 +1,4 @@
-# Metrics-Suite
+# Evaluate and Measure Software Metrics
 How to run:
 Using Eclipse to compile main.java
 
